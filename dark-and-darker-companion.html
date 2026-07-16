@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depths Companion — Dark and Darker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a08;
+  --bg-elev:#161210;
+  --card:#1d1712;
+  --card-2:#241c15;
+  --border:#3a2e20;
+  --ember:#e2762e;
+  --ember-deep:#9c3f1a;
+  --gold:#c9a24a;
+  --steel:#7fa3bd;
+  --parchment:#e8dcc2;
+  --dim:#a89578;
+  --dim-2:#6f6250;
+  --danger:#a33333;
+  --str:#b8543a;
+  --agi:#5f9e6e;
+  --wil:#7f8fd1;
+  --res:#c9a24a;
+  --kno:#7fa3bd;
+  --shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(226,118,46,.08), transparent 60%),
+    radial-gradient(ellipse 700px 600px at 100% 0%, rgba(127,163,189,.06), transparent 55%),
+    var(--bg);
+  color:var(--parchment);
+  font-family:'Spectral',serif;
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+}
+::selection{background:var(--ember-deep);color:#fff;}
+h1,h2,h3,h4{font-family:'Cinzel',serif;letter-spacing:.02em;color:var(--gold);margin:0 0 .4em;}
+a{color:var(--ember);}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* HEADER */
+header.top{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg, rgba(12,10,8,.97), rgba(12,10,8,.9));
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(6px);
+}
+.top-inner{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{
+  width:38px;height:38px;position:relative;flex:none;
+  background:conic-gradient(from 220deg, var(--ember), var(--ember-deep), var(--gold), var(--ember));
+  clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow:0 0 18px rgba(226,118,46,.45);
+  animation:flicker 4s ease-in-out infinite;
+}
+@keyframes flicker{
+  0%,100%{filter:brightness(1);}
+  45%{filter:brightness(1.12);}
+  50%{filter:brightness(.92);}
+  78%{filter:brightness(1.05);}
+}
+.brand-text .title{font-family:'Cinzel',serif;font-weight:800;font-size:1.3rem;color:var(--parchment);letter-spacing:.03em;}
+.brand-text .sub{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto;}
+.tab-btn{
+  background:transparent;border:1px solid transparent;color:var(--dim);
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 14px;cursor:pointer;border-radius:3px;transition:.15s;
+}
+.tab-btn:hover{color:var(--parchment);border-color:var(--border);}
+.tab-btn.active{color:var(--ember);border-color:var(--ember-deep);background:rgba(226,118,46,.08);}
+
+main{max-width:1180px;margin:0 auto;padding:30px 20px 90px;}
+.view{display:none;animation:fadein .35s ease;}
+.view.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+.hero{margin-bottom:26px;}
+.hero h1{font-size:1.9rem;margin-bottom:6px;}
+.hero p{color:var(--dim);max-width:720px;margin:0;}
+.eyebrow{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);margin-bottom:8px;}
+
+/* CLASS GRID */
+.class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:10px;}
+.class-card{
+  background:linear-gradient(180deg,var(--card-2),var(--card));
+  border:1px solid var(--border);border-radius:6px;padding:16px;cursor:pointer;
+  transition:.18s;position:relative;overflow:hidden;
+}
+.class-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 0%, rgba(226,118,46,.10), transparent 60%);opacity:0;transition:.2s;}
+.class-card:hover{border-color:var(--ember-deep);transform:translateY(-2px);box-shadow:var(--shadow);}
+.class-card:hover::before{opacity:1;}
+.class-card.selected{border-color:var(--ember);box-shadow:0 0 0 1px var(--ember-deep);}
+.class-card .icon{font-size:1.6rem;margin-bottom:6px;display:block;}
+.class-card h3{font-size:1.05rem;margin-bottom:2px;}
+.class-card .role{font-size:.72rem;color:var(--steel);text-transform:uppercase;letter-spacing:.08em;}
+.class-card .tier{
+  position:absolute;top:12px;right:12px;font-family:'Cinzel',serif;font-weight:700;font-size:.75rem;
+  width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);
+}
+.tier-S{color:#ffb648;border-color:#ffb648;background:rgba(255,182,72,.1);}
+.tier-A{color:var(--ember);border-color:var(--ember-deep);background:rgba(226,118,46,.08);}
+.tier-B{color:var(--steel);border-color:var(--steel);background:rgba(127,163,189,.08);}
+
+/* CLASS DETAIL */
+.detail-panel{
+  margin-top:22px;background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;
+  padding:24px;display:none;
+}
+.detail-panel.show{display:block;animation:fadein .3s ease;}
+.detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:18px;}
+.detail-head h2{font-size:1.5rem;margin-bottom:2px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--border);padding:4px 9px;border-radius:20px;color:var(--dim);}
+.badge.on{color:var(--ember);border-color:var(--ember-deep);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:760px){.two-col{grid-template-columns:1fr;}}
+.stat-block h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:10px;}
+.attr-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.attr-label{width:110px;font-size:.8rem;color:var(--dim);flex:none;}
+.attr-bar{flex:1;height:8px;background:#100d0a;border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+.attr-fill{height:100%;border-radius:4px;}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:600px){.pc-grid{grid-template-columns:1fr;}}
+.pc-box{border-radius:6px;padding:14px;border:1px solid var(--border);}
+.pc-box.pro{background:rgba(95,158,110,.06);border-color:#3a5a41;}
+.pc-box.con{background:rgba(163,51,51,.06);border-color:#5a3232;}
+.pc-box h4{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.pc-box.pro h4{color:var(--agi);}
+.pc-box.con h4{color:#d17878;}
+.pc-box ul{margin:0;padding-left:18px;font-size:.88rem;color:var(--parchment);}
+.pc-box li{margin-bottom:4px;}
+
+.gearlist{list-style:none;padding:0;margin:0;}
+.gearlist li{
+  display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:.9rem;
+}
+.gearlist li:last-child{border-bottom:none;}
+.gearlist .stat-name{color:var(--parchment);}
+.gearlist .stat-tag{font-size:.68rem;color:var(--dim-2);text-transform:uppercase;letter-spacing:.06em;}
+.priority-pill{
+  display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;
+  border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;margin-right:8px;
+  background:var(--ember-deep);color:#fff;
+}
+.tip-box{
+  margin-top:16px;background:linear-gradient(180deg, rgba(201,162,74,.08), transparent);
+  border:1px solid var(--gold);border-radius:6px;padding:14px 16px;font-size:.9rem;
+}
+.tip-box b{color:var(--gold);}
+
+/* Perks/skills */
+.perk-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0;}
+.perk-list{display:grid;gap:10px;}
+.perk-item{
+  display:grid;grid-template-columns:130px 1fr;gap:14px;background:var(--card);border:1px solid var(--border);
+  border-radius:6px;padding:12px 16px;align-items:start;
+}
+@media(max-width:640px){.perk-item{grid-template-columns:1fr;}}
+.perk-item .pname{font-family:'Cinzel',serif;color:var(--ember);font-size:.88rem;}
+.perk-item .ptype{font-size:.66rem;color:var(--dim-2);text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:3px;}
+.perk-item p{margin:0;font-size:.88rem;color:var(--parchment);}
+
+/* generic card list */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:16px 18px;}
+.info-card h3{font-size:1rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.info-card p{margin:0 0 8px;font-size:.88rem;color:var(--dim);}
+.info-card ul{margin:8px 0 0;padding-left:18px;font-size:.85rem;}
+.info-card li{margin-bottom:4px;}
+.threat{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:12px;border:1px solid var(--border);color:var(--dim);}
+.threat.low{color:var(--agi);border-color:#3a5a41;}
+.threat.mid{color:var(--gold);border-color:#6b5a2a;}
+.threat.high{color:#d17878;border-color:#5a3232;}
+
+/* search */
+.searchbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.searchbar input, .searchbar select{
+  background:var(--bg-elev);border:1px solid var(--border);color:var(--parchment);padding:10px 14px;border-radius:5px;
+  font-family:'Spectral',serif;font-size:.9rem;
+}
+.searchbar input{flex:1;min-width:200px;}
+.searchbar input:focus,.searchbar select:focus{outline:none;border-color:var(--ember-deep);}
+
+footer{border-top:1px solid var(--border);padding:24px 20px;text-align:center;color:var(--dim-2);font-size:.8rem;}
+footer a{color:var(--steel);}
+
+.map-hero{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px;
+}
+.map-hero .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+.map-hero h3{font-size:1.15rem;}
+.map-meta{font-size:.76rem;color:var(--dim-2);}
+.boss-tag{display:inline-block;background:rgba(226,118,46,.1);border:1px solid var(--ember-deep);color:var(--ember);
+  font-size:.72rem;padding:3px 9px;border-radius:12px;margin:3px 6px 0 0;}
+
+.scrollnote{color:var(--dim-2);font-size:.78rem;margin-top:6px;}
+.key-elements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:6px;}
+.key-el{display:flex;gap:10px;align-items:flex-start;background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;padding:10px 12px;}
+.key-el-icon{font-size:1.3rem;flex:none;line-height:1;}
+.key-el-label{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);margin-bottom:2px;}
+.key-el-note{font-size:.8rem;color:var(--dim);}
+.key-el-boss{border-color:var(--ember-deep);}
+.key-el-stairs{border-color:var(--steel);}
+.key-el-exit{border-color:#3a5a41;}
+.divider{height:1px;background:var(--border);margin:26px 0;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <div class="title">Depths Companion</div>
+        <div class="sub">Dark and Darker Companion</div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabNav">
+      <button class="tab-btn active" data-view="classes">Classes</button>
+      <button class="tab-btn" data-view="builds">Builds</button>
+      <button class="tab-btn" data-view="perks">Perks &amp; Skills</button>
+      <button class="tab-btn" data-view="bestiary">Bestiary</button>
+      <button class="tab-btn" data-view="maps">Maps &amp; Bosses</button>
+      <button class="tab-btn" data-view="gear">Gear &amp; Stats</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ CLASSES ============ -->
+  <section class="view active" id="view-classes">
+    <div class="hero">
+      <div class="eyebrow">Class guide</div>
+      <h1>Choose your class, know your power</h1>
+      <p>Click a class for attributes, recommended gear stats, perk/skill priority, and pros &amp; cons. Tier ratings are based on the current meta (patch 6.9–6.11, mid-2026) and change with each patch.</p>
+    </div>
+    <div class="class-grid" id="classGrid"></div>
+    <div class="detail-panel" id="classDetail"></div>
+  </section>
+
+  <!-- ============ BUILDS ============ -->
+  <section class="view" id="view-builds">
+    <div class="hero">
+      <div class="eyebrow">Build archetypes</div>
+      <h1>Popular community builds</h1>
+      <p>These are the best-known build archetypes from the current meta — based on what top players and the community run on YouTube/Twitch. Names are playstyle-based (e.g. "Smite Cleric"), not tied to a single individual, since builds are constantly refined and shared.</p>
+    </div>
+    <div class="searchbar">
+      <select id="buildClassFilter"></select>
+    </div>
+    <div class="card-grid" id="buildGrid"></div>
+  </section>
+
+  <!-- ============ PERKS & SKILLS ============ -->
+  <section class="view" id="view-perks">
+    <div class="hero">
+      <div class="eyebrow">Mechanics</div>
+      <h1>Perks &amp; Skills per class</h1>
+      <p>Perks are passive choices you pick at character creation and per level. Skills are active abilities you slot onto your action bar (usually 2-4 slots, depending on skill points). Pick a tab below for the key options per class.</p>
+    </div>
+    <div class="perk-tabs" id="perkTabs"></div>
+    <div id="perkContent"></div>
+  </section>
+
+  <!-- ============ BESTIARY ============ -->
+  <section class="view" id="view-bestiary">
+    <div class="hero">
+      <div class="eyebrow">Know what you're fighting</div>
+      <h1>Bestiary — Enemy mobs</h1>
+      <p>Overview of the most common PvE threats per zone, with tips on how best to handle them.</p>
+    </div>
+    <div class="searchbar">
+      <input type="text" id="bestiarySearch" placeholder="Search a mob (e.g. skeleton, goblin, ghoul)...">
+    </div>
+    <div class="card-grid" id="bestiaryGrid"></div>
+  </section>
+
+  <!-- ============ MAPS ============ -->
+  <section class="view" id="view-maps">
+    <div class="hero">
+      <div class="eyebrow">Know the dungeon</div>
+      <h1>Maps &amp; Boss Locations</h1>
+      <p>Every map has its own floors, loot hotspots and end bosses. Extraction portals and boss vaults are often the riskiest — but most lucrative — zones.</p>
+    </div>
+    <h2 style="font-size:1.05rem;">Icon legend</h2>
+    <div id="mapLegend" class="card-grid" style="margin-bottom:26px;"></div>
+    <h2 style="font-size:1.05rem;">Dungeon campaigns &amp; bosses</h2>
+    <div id="mapList"></div>
+  </section>
+
+  <!-- ============ GEAR & STATS ============ -->
+  <section class="view" id="view-gear">
+    <div class="hero">
+      <div class="eyebrow">Attributes &amp; itemization</div>
+      <h1>Gear &amp; Stats explained</h1>
+      <p>How attributes work, which gear stats to look for, and how to read them on items.</p>
+    </div>
+    <div class="card-grid" id="attrGrid"></div>
+    <div class="divider"></div>
+    <h2>Key item stats to look for</h2>
+    <div class="card-grid" id="statGrid"></div>
+  </section>
+
+</main>
+
+<footer>
+  Community-made reference guide, not an official Ironmace product. Meta &amp; patch info changes regularly —
+  check the most up-to-date build planner and live database at <a href="https://darkerdb.com/" target="_blank">darkerdb.com</a>.
+  Want a deeper dive into perks/skills for a specific class? Let me know and I'll expand that section further.
+</footer>
+
+<script>
+/* ================= DATA ================= */
+
+const CLASSES = [
+  {
+    id:'fighter', icon:'⚔️', name:'Fighter', role:'Frontline / Duelist', tier:'A',
+    summary:'The most versatile class: can wear almost any weapon and armor. Strong in 1v1 duels thanks to Second Wind and parry/riposte options, but very gear-dependent.',
+    attrs:{str:75,agi:60,wil:20,res:55,kno:20},
+    statPriority:['+All Attributes (armor/accessories)','Strength (melee damage + physical power)','Max HP / Vigor','Additional Physical Damage / Weapon Damage','Agility (small swing/move speed boost)'],
+    gearFocus:'Multiple community guides (StudioLoot, Dark and Darker Wiki, among others) consistently agree on the same order: +All Attributes is always the best general roll, then Strength for damage and HP, followed by raw Physical/Weapon Damage rolls. Agility and Vigor are solid secondary stats but lower priority than Strength. Pair with plate/chain armor and a 1H+shield or 2H weapon, depending on solo (shield) or trio (2H) playstyle.',
+    pros:['Can wear almost every weapon & armor — extremely flexible','Second Wind provides sustain in duels','Strong solo and team player','Easy to learn, high skill ceiling via weapon mastery'],
+    cons:['Very gear-dependent, weak early in a match without loot','No ranged or magic options, pure close combat','No group heal or utility like Cleric/Bard'],
+    tip:'Start as Fighter with a Longsword + Kite Shield and a Plate/Chain mix — forgiving, strong in 1v1, and you\'ll learn block and parry timing.'
+  },
+  {
+    id:'barbarian', icon:'🪓', name:'Barbarian', role:'Berserker / Tank-damage', tier:'B',
+    summary:'Highest base HP in the game and a master of two-handed weapons. Slow in movement and attack speed, but devastating in duels once he closes the distance.',
+    attrs:{str:90,agi:30,wil:10,res:35,kno:10},
+    statPriority:['Strength (hard-stack — scales heavily with both damage and HP)','+All Attributes','Additional Physical Damage','Armor Rating / Might (on armor)','Magic Resistance (covers the weakness to casters)'],
+    gearFocus:'Community guides are fairly unanimous here: Barbarian "hard-stacks" Strength because it disproportionately raises both damage scaling and HP pool. After that, +All Attributes is the best general roll, followed by raw Additional Physical Damage. On armor, Armor Rating (AR) plus Might (Strength boost) is standard, with Magic Resistance as a bonus against Wizard/Warlock. Dexterity/Agility is often labeled "secondary, not necessary."',
+    pros:['Highest HP pool in the game','Devastating burst damage with Rage + 2H weapons','Strong in duo/trio front-line role','Relatively cheap to gear (less dependent on expensive magic items)'],
+    cons:['Slowest movement and attack speed of all classes','Easily kited by ranged classes','Weak against well-coordinated groups'],
+    tip:'Combine Rage with a Greataxe or Felling Axe for headshot one-shots on lightly armored opponents — but save Second Wind/HP potions for when you get kited.'
+  },
+  {
+    id:'rogue', icon:'🗡️', name:'Rogue', role:'Stealth / Skirmisher', tier:'C',
+    summary:'The fastest and quietest class. Excellent at scouting, backstabs, and avoiding fights, but has low HP and little team utility.',
+    attrs:{str:35,agi:95,wil:15,res:30,kno:35},
+    statPriority:['Agility (move speed, attack speed, dodge, crit)','+All Attributes','Additional Magic Damage (stacks with the Poisoned Weapon perk!)','Strength (secondary, for extra physical damage)','Resourcefulness (lockpicking/traps)'],
+    gearFocus:'According to the Dark and Darker Wiki and the StudioLoot guide, Agility is by far the most important stat for Rogue: it governs move speed, attack speed, dodge chance, and crit chance all at once. Notably, if you run the Poisoned Weapon perk, Additional Magic Damage suddenly becomes a top priority because every poison tick benefits from it — something that\'s easy to overlook. Strength works fine as a secondary stat for extra physical damage.',
+    pros:['Fastest class: hit-and-run and escaping','Excellent scouting/reconnaissance and stealth','High burst via backstab crits','Can pick locks and set/avoid traps'],
+    cons:['Lowest HP pool, dies quickly in open fights','Weak in prolonged fights or against groups','Little support for teammates'],
+    tip:'Play Rogue as your team\'s intel source: scout ahead, mark enemies, and only fight when you have the first (surprise) hit.'
+  },
+  {
+    id:'ranger', icon:'🏹', name:'Ranger', role:'Ranged DPS / Tracker', tier:'A',
+    summary:'The archer par excellence: high ranged damage, can follow tracks (tracking) and set traps. Weak in melee, so positioning is everything.',
+    attrs:{str:45,agi:80,wil:15,res:70,kno:20},
+    statPriority:['+All Attributes','Additional / True Physical Damage (which one depends on your bow, see below)','Strength (scales physical power — especially with Longbow)','Agility up to ~15 (movement/action-speed threshold, diminishing returns after)','Armor Penetration (especially with low True Damage)'],
+    gearFocus:'Multiple community sources (Steam discussions, FPSChampion, StudioLoot) show that stat choice for Ranger heavily depends on your bow type: with the Longbow, Strength/Physical Power is king; with the Survival Bow (low armor pen), True Physical Damage is king instead because it ignores armor; the Recurve Bow sits somewhere in the middle. Agility gives a noticeable move speed boost mainly under 15 points; above that you\'re better off hunting for boots with move speed affixes than stacking pure Agility. Dexterity (action speed) is often considered overrated by experienced players as long as you use Quickshot/instant-reload.',
+    pros:['Highest consistent ranged DPS','Tracking skill reveals enemies on the map','Traps give control over engagements','Strong at kiting and hit-and-run'],
+    cons:['Very weak in melee, few options in close-range engagements','Ammo (arrows) is limited and takes up inventory space','Mediocre in group play without good communication'],
+    tip:'Choose your bow first (Longbow = Strength build, Survival Bow = True Damage build), then itemize accordingly. +All Attributes and Additional Physical Damage are a safe first pick for any Ranger build.'
+  },
+  {
+    id:'wizard', icon:'🔮', name:'Wizard', role:'Burst Caster', tier:'B',
+    summary:'Towering burst damage via spells like Fireball and Magic Missile, but extremely low HP and physical damage — and heavily reliant on good gear/spellbook.',
+    attrs:{str:15,agi:45,wil:95,res:20,kno:80},
+    statPriority:['+All Attributes','Knowledge (up to ~30-35 for the spell capacity & cast speed sweet spot)','Willpower (spell power & buff duration)','Additional / True Magic Damage','Magic Pen (on staff/orb)'],
+    gearFocus:'StudioLoot and PlayerAuctions guides recommend hitting 30-35 Knowledge first (this gives a good balance of spell count, cast speed and spell point regen) before going all-in on raw damage stats. After that, Willpower is your key damage/duration stat, with Additional/True Magic Damage as the strongest single gear affix. Look for a Crystal Ball/Spellbook or Staff with +Magic Pen and +Cast Speed.',
+    pros:['Highest burst damage in the game via spell combos','Area-of-effect spells are strong against groups','Utility spells (teleport, slow) for engage/disengage'],
+    cons:['Extremely low HP, dies in 1-2 hits from melee classes','Very gear-dependent — weak without the right spellbook/staff','Long cast times make him vulnerable to interrupts'],
+    tip:'Always keep an escape spell (e.g. Blink) ready and never cast in the open without cover — Wizard wins fights by landing the first burst, not by fighting long.'
+  },
+  {
+    id:'cleric', icon:'✝️', name:'Cleric', role:'Support / Solo Sustain', tier:'S',
+    summary:'The most versatile class in the game: strong healing, solid PvE clear against undead, and enough damage to hold his own solo. Nearly mandatory in trio teams.',
+    attrs:{str:55,agi:40,wil:80,res:35,kno:60},
+    statPriority:['+All Attributes','Knowledge (up to 20+ if you want to slot Resurrect) or Spell Capacity','Willpower (spell power incl. healing)','Magical Healing (direct effect on heal output)','Strength (for Blunt/melee-hybrid builds)'],
+    gearFocus:'According to StudioLoot\'s Cleric guide, the order is: +All Attributes first, then Knowledge (important for higher-tier spells via Spell Memory, and crucial up to 20 if you want to use Resurrect), then Willpower for general spell/heal power, and finally loose Magical Healing rolls on gear. Pair with a Mace/Morning Star + Heater Shield — the shield is notably strong because it can block both melee attacks and arrows/spells.',
+    pros:['Unique group heal + buffs — nearly mandatory in trios','Very strong solo survivability through self-healing','Effective against undead-heavy PvE content','Flexible: can play support, hybrid damage (Smite), or tank'],
+    cons:['Lower attack speed than pure damage classes','Becomes a priority target in team fights','Mana management requires planning during long runs'],
+    tip:'The "Smite Cleric" build (Holy Strike/Judgement + Bless + Spell Memory) is currently the strongest all-round choice: good damage, self-heal, and team value in one.'
+  },
+  {
+    id:'bard', icon:'🎻', name:'Bard', role:'Support / Debuffer', tier:'A',
+    summary:'Support through songs that weaken enemies and strengthen teammates. Weak in solo damage, but one of the strongest utility classes in team play.',
+    attrs:{str:35,agi:55,wil:65,res:45,kno:55},
+    statPriority:['+All Attributes','Strength (survivability + damage — mentioned more often than expected)','Willpower (extends buff/song duration)','Agility (movement and attack speed with the Rapier)','Physical/Magical Damage modifiers (secondary)'],
+    gearFocus:'Notably, from the StudioLoot Meta Bard guide: Strength is explicitly called "a must" here alongside +All Attributes, more than you\'d expect from a pure support class — it boosts both your survivability and your backup melee damage with the Rapier. Willpower then extends the duration of your buff/curse songs, and Agility helps with movement and attack speed.',
+    pros:['Powerful debuffs on enemies and buffs for the team','Excellent utility in trio comps alongside Cleric','Surprisingly strong crowd control via songs'],
+    cons:['Low solo damage, weak as a lone player in fights','Heavily dependent on teammates to deliver value','Little direct kill potential against armored opponents'],
+    tip:'Never play Bard up front: stay behind your team, keep debuff songs active on the enemy, and swap between buff/curse depending on the phase of the fight.'
+  },
+  {
+    id:'warlock', icon:'💀', name:'Warlock', role:'DoT / Curse Caster', tier:'A',
+    summary:'The dark counterpart to the Wizard: curses and damage-over-time instead of pure burst, with strong sustain via lifesteal-like mechanics.',
+    attrs:{str:25,agi:50,wil:85,res:40,kno:65},
+    statPriority:['+All Attributes','Magical Healing (life-leech via Torture Mastery — called "mandatory for every build")','Willpower / Magical Power (curse and spell power)','Additional Magic Damage (also boosts Blow of Corruption)','Strength or Agility, depending on hit-and-run vs. frontline playstyle'],
+    gearFocus:'Community guides (StudioLoot, Steam discussions) call +Magical Healing an almost-mandatory stat for every Warlock build, because the Torture Mastery perk gives you HP back directly when landing spells that themselves cost HP. After that, Willpower for spell damage, and Additional Magic Damage because it also boosts your melee Blow of Corruption. The choice between Strength (frontline/melee-hybrid) and Agility (hit-and-run caster) purely depends on your playstyle.',
+    pros:['Strong sustained damage via curses & DoTs','Can weaken enemies (less damage/heal) — strong counter to tanks','Good solo and group value through self-sustain'],
+    cons:['Less burst than Wizard, so slower in short fights','Still relatively fragile in terms of HP','Requires good timing of curses before the fight escalates'],
+    tip:'Always apply your curses (Curse of Pain/Weakness) early in the fight — the DoT damage, lifesteal and debuffs stack in your favor toward the end of the fight.'
+  },
+  {
+    id:'druid', icon:'🐺', name:'Druid', role:'Shapeshifter / All-rounder', tier:'S',
+    summary:'The most versatile class in the game thanks to shapeshifting: Bear for tankiness, Panther for mobility, Rat for scouting. High skill ceiling, extremely strong in the right hands.',
+    attrs:{str:60,agi:70,wil:70,res:50,kno:45},
+    statPriority:['Willpower (spell power & healing, core stat)','Magical Power / Movement Speed (pairs well with mobility perks)','Strength or Agility, depending on frontline (Bear/melee) vs. skirmish (Panther) playstyle','Max HP / Magic Resist (especially for solo builds)','+Will on cloth-armor sets'],
+    gearFocus:'Multiple 2025/2026 guides agree that Willpower is the base stat (spell power and healing), with Movement Speed as a strong secondary stat because it synergizes with Dreamwalk and shapeshift mobility. Beyond that, itemization depends on playstyle: a frontline/melee-oriented Bear build wants more Strength and Physical Damage Reduction, a Panther/skirmish build wants more Agility instead. Druid has relatively limited armor choices (often cloth-oriented), so focus within that on +Will and +Magic Damage Reduction.',
+    pros:['Shapeshifting gives unmatched flexibility (tank/mobile/scout)','Strong self-heal and crowd control via roots/summons','Excellent solo and group class'],
+    cons:['High skill ceiling: hard to time shapeshifts well','Lower burst damage than pure DPS classes','Many abilities require good positioning'],
+    tip:'Learn first when to switch: Bear to absorb damage on engage, Panther to kite or flee, and caster-form for healing/utility in between.'
+  },
+  {
+    id:'sorcerer', icon:'⚡', name:'Sorcerer', role:'High-risk Glass Cannon', tier:'B',
+    summary:'The newest class with a sky-high damage ceiling via elemental magic (including lightning), but with the steepest learning curve and lowest consistency in the game.',
+    attrs:{str:10,agi:55,wil:90,res:25,kno:75},
+    statPriority:['+All Attributes','Willpower (spell power)','Knowledge (spell slots/mastery)','Cast Speed','Max HP (compensates for extreme fragility)'],
+    gearFocus:'Sorcerer is new enough that there\'s still relatively little crystallized community consensus on exact stat rolls (unlike the other classes) — but the general line follows the same pattern as Wizard: full focus on Willpower/Knowledge itemization with pure cloth armor, no room for compromise armor.',
+    pros:['Highest theoretical skill ceiling and burst potential','Unique elemental combo mechanics (e.g. lightning chaining)','Very rewarding for players who fully master the class'],
+    cons:['Currently the lowest tier due to inconsistent mechanics','Extremely fragile, a single mistake is often fatal','Steep learning curve, not recommended for beginners'],
+    tip:'Only play Sorcerer once you\'ve already mastered Wizard — the mechanics are less forgiving but the ceiling is higher.'
+  },
+];
+
+const TIER_LABEL = {S:'S-tier', A:'A-tier', B:'B-tier', C:'C-tier'};
+
+const BUILDS = [
+  {cls:'ranger', name:'Marksman / Longbow Ranger', desc:'The classic "glass cannon" Ranger build: Longbow as main weapon, full focus on Strength for the heaviest physical power scaling a bow can achieve in the game. The community consistently recommends Sharpshooter and Ranged Weapons Mastery as fixed perks, with Quickshot and Overdraw or Penetrating Shot as a skill combo for burst against plated opponents. Weakness: you\'re very vulnerable up close, so Backstep and a spear (via Spear Proficiency) are often carried as an emergency option.', stats:'STR > AGI > RES', perks:'Sharpshooter, Ranged Weapons Mastery, Longshot Expert, Point-Blank Expert', skills:'Quickshot + Overdraw (or Penetrating Shot)'},
+  {cls:'ranger', name:'Trapper / Survival Bow Ranger', desc:'A more defensive variant that leans on the Survival Bow (True Damage instead of Strength scaling, so armor-independent) and Resourcefulness for faster trap placement and more traps in your inventory. Community guides describe this as the strongest choice in solo play: you control rooms with bear traps, kite through doors, and let the enemy build up the pressure instead of you taking the risk. Chase (tracking) is almost mandatory to know where opponents are hiding.', stats:'RES > STR > AGI', perks:'Chase, Point-Blank Expert, Crippling Shot, First Aid', skills:'Field Ration + Multishot (or Back Step for mobility)'},
+  {cls:'cleric', name:'Smite Cleric', desc:'Currently the community\'s most recommended general-purpose Cleric build: a hybrid of melee damage (the Smite skill gives every hit an extra Divine damage instance) and self-sustain via Kindness and Advanced Healer. StudioLoot and the wiki guides emphasize that this build is strong both solo and in a trio because you can finish kills yourself without depending on your team, while still being able to heal properly when needed.', stats:'WIL > STR > KNO', perks:'Advanced Healer, Kindness, Faithfulness, Undead Slaying', skills:'Smite + Spell Memory (Bless, Holy Strike, Lesser Heal)'},
+  {cls:'cleric', name:'Support / Sanctuary Cleric', desc:'Fully focused on group healing, buffs and undead clear: Holy Aura and Requiem make sure your team survives more and fallen allies come back more cheaply. This build is mostly recommended in the community for organized trios with a tanky frontline (Fighter/Barbarian) — you stay in the back, keep Bless/Protection active and use Sanctuary or Holy Purification to clear undead-heavy PvE rooms in one go.', stats:'WIL > KNO > RES', perks:'Holy Aura, Requiem, Protection from Evil, Over Healing', skills:'Spell Memory (Bless, Sanctuary, Resurrection) + Divine Protection'},
+  {cls:'fighter', name:'Sword & Board Duelist', desc:'The most forgiving Fighter build according to community guides: Longsword or Arming Sword + Heater Shield, with Shield Mastery and Weapon Guard to reward blocks with tempo and damage. Perfect Block and Shield Slam give control in 1v1 duels, and Second Wind lets you survive longer fights. Often recommended as the "first build" for new players because blocking is more forgiving than timing parries.', stats:'STR > RES > AGI', perks:'Shield Mastery, Weapon Guard, Defense Mastery, Counterattack', skills:'Second Wind + Shield Slam (or Perfect Block)'},
+  {cls:'fighter', name:'Greatsword / Zweihander Fighter', desc:'Full-aggression build with a 2H weapon for maximum damage per hit; Sword Mastery and Combo Attack stack bonus damage on consecutive hits. The community describes this build as strong against heavily armored opponents thanks to the high base damage, but more vulnerable to faster classes (Rogue/Ranger) due to the slower swing and recovery time — a Horseman\'s Axe is often carried as a secondary weapon to compensate for that matchup.', stats:'STR > AGI > RES', perks:'Sword Mastery, Combo Attack, Veteran Instinct, Weapon Mastery', skills:'Victory Strike + Adrenaline Rush'},
+  {cls:'barbarian', name:'Rage Berserker (Axe)', desc:'The most popular Barbarian build in the community: Felling Axe or Battle Axe combined with Axe Specialization and Executioner for devastating headshot damage, and Rage for the burst window to open engages. Guides do warn that 2H weapons have long recovery times, so a Hatchet or Horseman\'s Axe as a secondary weapon is recommended against faster classes that can bait your swing.', stats:'STR > RES > AGI', perks:'Axe Specialization, Executioner, Berserker, Iron Will', skills:'Rage + War Cry (or Whirlwind against groups)'},
+  {cls:'barbarian', name:'Tank / War Cry Barbarian', desc:'Less burst, more durability: Iron Will and Robust stack HP and magic resistance, while War Cry and Treacherous Lungs extend the duration of your buffs so you and your team hold out longer in sustained PvE or team fights. Often used by players who deploy the Barbarian as a "wall" for their trio rather than as the primary damage dealer.', stats:'STR > VIG > RES', perks:'Iron Will, Robust, Treacherous Lungs, Morale Boost', skills:'War Cry + Blood Exchange'},
+  {cls:'wizard', name:'Burst / Battle Wizard', desc:'A widely-shared community build (including the "Battle Wizard" guide): Arcane Mastery, Quick Chant, Ice Shield and a fourth flexible perk (often Reactive Shield) for extra survival. Spellbook: Magic Missile, Ignite, Haste, Invisibility, adding Fireball once you have enough spell capacity. The idea is simple according to the community: win the fight with your first burst combo, then use Invisibility/Haste to reset or flee.', stats:'WIL > KNO > AGI', perks:'Arcane Mastery, Quick Chant, Ice Shield, Reactive Shield', skills:'Meditation + Spell Memory (Magic Missile, Ignite, Haste, Invisibility)'},
+  {cls:'wizard', name:'Support / Utility Wizard', desc:'Less common but used by experienced players in organized trios: Light Orb to reveal enemy Rogues, Slow and Ice Bolt for crowd control, and Haste to speed up your team. The community agrees Wizard doesn\'t have "real" support skills like Bard/Cleric, so this is more a utility-oriented playstyle within the existing spell pool than a separate build.', stats:'WIL > KNO > AGI', perks:'Sage, Quick Chant, Mana Surge, Spell Overload', skills:'Meditation + Spell Memory (Light Orb, Slow, Haste)'},
+  {cls:'rogue', name:'Backstab Assassin (Daggers)', desc:'The signature Rogue build: dual daggers, Back Attack and Dagger Mastery for maximum burst from behind, combined with Hide and Ambush to set up a surprise attack. Community guides emphasize this is most effective against poorly coordinated enemies or isolated teammates — never take on a group fight head-on.', stats:'AGI > STR > RES', perks:'Back Attack, Dagger Mastery, Ambush, Thrust', skills:'Hide + Rupture (or Shadowstep for extra mobility)'},
+  {cls:'rogue', name:'Poison Utility Rogue', desc:'Built around the Poisoned Weapon perk: every hit stacks poison (up to 5x) and additionally lowers incoming healing by -10% per stack, making this build a strong counter against Cleric/Druid healers. Because poison counts as magical damage, this build looks for Magical Damage on gear more often instead of pure physical power — a detail many beginners miss.', stats:'AGI > RES > STR', perks:'Poisoned Weapon, Traps and Locks, Creep, Veil of Shadows', skills:'Hide + Caltrops (or Cut Throat to block healing/skills)'},
+  {cls:'bard', name:'Meta / Buff-Rotation Bard', desc:'Community consensus (including StudioLoot\'s "Meta Bard" guide) revolves around a fixed rotation of four songs: Rousing Rhythms → Beats of Alacrity → Ballad of Courage → Aria of Alacrity, in that order because Rousing Rhythms first boosts your spell capacity and song duration. Note: some of these songs (Beats/Aria of Alacrity, Ballad of Courage) only buff yourself, not your team — something new Bards often misunderstand.', stats:'DEX > KNO > RES', perks:'Rapier Mastery, Reinforced Instruments, Lore Mastery, Superior Dexterity', skills:'Music Memory + Music Memory 2 (for maximum song choice)'},
+  {cls:'bard', name:'Debuff / Crowd-Control Bard', desc:'Revolves around Shriek of Weakness (heavily weakens enemy physical damage/armor — can nearly double your team\'s output against plated enemies) and Song of Silence or Dissonance to shut down casters/skill users. Chaotic Discord is cited by the community as a strong solo-PvE tool: you set monsters against each other while staying safe yourself.', stats:'DEX > WIL > RES', perks:'Melodic Protection, Story Teller, Dancing Feet, Wanderer\'s Luck', skills:'Dissonance + Music Memory (Shriek of Weakness, Song of Silence, Chaotic Discord)'},
+  {cls:'warlock', name:'Melee-Hybrid Warlock', desc:'Combines Blow of Corruption (extra Evil damage + anti-heal on your next attack) with Torture Mastery and Shadow Touch for constant self-healing during melee engages. The community calls this the most accessible Warlock build because you\'re less reliant on channel spells like Life Drain that leave you open to counterattacks.', stats:'WIL > STR > RES', perks:'Torture Mastery, Shadow Touch, Vampirism, Soul Collector', skills:'Blow of Corruption + Spell Memory (Curse of Pain, Bolt of Darkness)'},
+  {cls:'warlock', name:'Curse DoT / Range Warlock', desc:'Stacks Curse of Pain and Curse of Weakness early in the fight (with Curse Mastery for longer duration) and keeps distance with Bolt of Darkness and Ray of Darkness. Because Warlock spells cost HP instead of mana, the community stresses you must always be able to top up Recoverable Health via bandages or a Bard — without that sustain plan you simply kill yourself.', stats:'WIL > KNO > RES', perks:'Curse Mastery, Dark Enhancement, Antimagic, Immortal Lament', skills:'Phantomize + Spell Memory (Curse of Pain, Curse of Weakness, Ray of Darkness)'},
+  {cls:'druid', name:'Bear Tank Druid', desc:'Shapeshift into Bear form to absorb damage when opening an engage (50% Physical Damage Reduction Mod + 50% bonus max HP), and switch back to human form for healing in between via Nature\'s Touch and Restore. Enhanced Wildness and Shapeshift Mastery are often taken together to maximize both tankiness and switch speed.', stats:'STR > WIL > VIG', perks:'Enhanced Wildness, Shapeshift Mastery, Sun and Moon, Thorn Coat', skills:'Shapeshift Memory (Bear + Panther) + Spell Memory'},
+  {cls:'druid', name:'Panther Skirmisher', desc:'Focuses on Panther form for the highest mobility in the game: Rush gives a dash + frenzy window with midair attacks, ideal for hit-and-run and quickly switching between loot hotspots. The community warns that Panther form itself is more vulnerable (-30% Physical Damage Reduction Mod), so this build revolves mainly around never standing still long enough to get hit.', stats:'AGI > WIL > STR', perks:'Enhanced Wildness, Spirit Magic Mastery, Dreamwalk, Lifebloom Aura', skills:'Shapeshift Memory (Panther + Rat) + Spell Memory (Nature\'s Touch, Entangling Vines)'},
+  {cls:'sorcerer', name:'Elemental Merge Sorcerer', desc:'Revolves around the unique merge mechanic: cast two spells at once (one per hand) to combine them into a more powerful spell with no cast time, such as Electric Dash (Vortex + Lightning Bolt) for mobility + damage in one. Because Sorcerer is still relatively new, there\'s less crystallized community consensus than for other classes, but Spell Stride and Merged Might are most often recommended to support this merge playstyle.', stats:'WIL > KNO > DEX', perks:'Spell Stride, Merged Might, Mana Flow, Elemental Fury', skills:'Sorcery Memory + Sorcery Combat (for melee backup with e.g. Crystal Sword)'},
+];
+
+/* Source: official Dark and Darker Wiki (darkanddarker.wiki.spellsandguns.com), patch 6.11 — complete perk and skill lists per class. */
+const PERKS_SKILLS = {
+  fighter:{
+    perks:[
+      ['Adrenaline Spike','Perk','Below 40% HP: +15% Action Speed, +3% Move Speed Bonus and +30% Regular Interaction Speed for 12s (24s cooldown).'],
+      ['Barricade','Perk','In defensive stance: +75 Armor Rating and +75 Magical Resistance.'],
+      ['Combo Attack','Perk','+10% Physical Power Bonus per stack (max 2) on consecutive melee hits within 2s.'],
+      ['Counterattack','Perk','After a successful block: +10% Move Speed Bonus and +10% Action Speed for 3s.'],
+      ['Defense Mastery','Perk','+15% Item Armor Rating Bonus from your armor and Physical Damage Reduction cap raised to 75%.'],
+      ['Dual Wield','Perk','+10% Action Speed with a weapon in both hands (except lanterns/shields).'],
+      ['Last Bastion','Perk','Below 33% HP: +150 Armor Rating, +50 Magical Resistance and +30% Projectile Damage Reduction for 8s (48s cooldown).'],
+      ['Projectile Resistance','Perk','+10% Projectile Damage Reduction, +10% extra in defensive stance.'],
+      ['Shield Mastery','Perk','+10% Move Speed in defensive stance; after a successful block +50% Action Speed and +10% Physical Power on your next attack.'],
+      ['Slayer','Perk','With a weapon in each hand: +5 Physical Buff Weapon Damage and +10 Move Speed, but no more plate armor.'],
+      ['Swift','Perk','-20% Armor Speed Penalty Bonus (less move speed loss from heavy armor).'],
+      ['Sword Mastery','Perk','With a sword: +2 Physical Buff Weapon Damage, +5% Action Speed, and +10 Move Speed in defensive stance.'],
+      ['Veteran Instinct','Perk','On entering combat: +10% Physical Damage Reduction and +10% Physical Power for 4s.'],
+      ['Weapon Guard','Perk','While blocking: +5% Physical Damage Reduction; after a successful block +10% Physical Power and +5% Action Speed for 2s.'],
+      ['Weapon Mastery','Perk','Grants the ability to use any weapon in the game.'],
+    ],
+    skills:[
+      ['Adrenaline Rush','Skill','+15% Action Speed and +5% Move Speed for 8s, followed by a brief negative aftermath (28s cooldown).'],
+      ['Breakthrough','Skill','Removes slow/knockback debuffs and grants immunity + move speed for 8s (24s cooldown).'],
+      ['Disarm','Skill','Block a melee attack within 8s to disarm the attacker for 1s (24s cooldown).'],
+      ['Fortified Ground','Skill','Places a banner that gives allies within 33m +3 All Attributes (18s cooldown).'],
+      ['Perfect Block','Skill','+5 Impact Resistance for 8s (7s cooldown).'],
+      ['Pommel Strike','Skill','Hilt attack with a 1H weapon deals extra damage and silence; on interrupt, extra damage + slow (18s cooldown).'],
+      ['Second Wind','Skill','Restores 40% of your max HP over 12s and removes Adrenaline Rush penalties. 1 use, rechargeable at campfire.'],
+      ['Shield Slam','Skill','A shield bash that blocks and deals damage + knockback + slow (8s cooldown).'],
+      ['Spell Reflection','Skill','While blocking: reflects projectile/hitscan spells and +15% Magical Damage Reduction (18s cooldown).'],
+      ['Sprint','Skill','3 stacks of Momentum for extra move speed, losing 1 stack every 2s (28s cooldown).'],
+      ['Taunt','Skill','Increases monster aggro within 7.5m by 200%; +12% Physical/Magical Damage Reduction for 8s (18s cooldown).'],
+      ['Victory Strike','Skill','Your next attack within 10s deals +40% Physical Power; resets on a kill (24s cooldown).'],
+    ]
+  },
+  barbarian:{
+    perks:[
+      ['Axe Specialization','Perk','With axes: +3 Physical Buff Weapon Damage.'],
+      ['Berserker','Perk','+2% Physical Power and +0.5% Move Speed per 10% missing HP — up to +20% damage / +5% speed at low HP.'],
+      ['Carnage','Perk','Hitting 2+ players within 1.5s grants +40% Physical Power for 3s.'],
+      ['Executioner','Perk','While using/throwing axes: +20% Headshot Damage Modifier.'],
+      ['Heavy Swing','Perk','2H weapons double the duration of move-speed slows applied to the target.'],
+      ['Iron Will','Perk','+75 Magical Resistance, knockback immunity, Magical Damage Reduction cap raised to 75%.'],
+      ['Morale Boost','Perk','After a player kill: heal 25% of your max HP.'],
+      ['Potion Chugger','Perk','1.2x healing/shielding from drinks, but in 0.5x the time.'],
+      ['Savage','Perk','Without chest armor: +10% Physical Power and +1 Impact Power.'],
+      ['Skull Splitter','Perk','Headshots inflict Bleed on the enemy (12 damage over 4s).'],
+      ['Crush','Perk','With a 2H weapon: destroy props (doors/chests) in one hit and +1 Impact Power against blocks/parries.'],
+      ['Robust','Perk','+10% Max Health Bonus.'],
+      ['Treacherous Lungs','Perk','Extends War Cry/Rage/Savage Roar to 1.5x their base duration.'],
+      ['Two-Hander','Perk','With a 2H weapon: +5% Physical Power and +10% Armor Penetration.'],
+    ],
+    skills:[
+      ['Achilles Strike','Skill','8s buff: on a hit, the target gets -30% Move Speed + damage per step for 2s (24s cooldown).'],
+      ['Blood Exchange','Skill','+15% Action Speed and +15% Life Steal for 8s, at the cost of -10% max HP as damage (28s cooldown).'],
+      ['Finishing Blow','Skill','Next attack deals +5 True Physical damage; executes if target is ≤10% HP (24s cooldown).'],
+      ['Grappling Hook','Skill','Pulls a target within 4m toward you and slows them (16s cooldown).'],
+      ['Hurl Weapon','Skill','Throw your axe for 150% weapon damage + 8 Impact Power (16s cooldown, must retrieve).'],
+      ['Rage','Skill','+10 Strength and +7% Move Speed for 6s, at the cost of -5% Physical Damage Reduction (28s cooldown).'],
+      ['Reckless Attack','Skill','-100 Armor Rating for 8s, but your next attack gains +50% Armor Penetration (24s cooldown).'],
+      ['Savage Roar','Skill','Enemies within 7.5m get -30% Physical Power and -2.5% Move Speed for 6s; monsters flee for 3s (28s cooldown).'],
+      ['War Cry','Skill','You and allies within 7.5m get +20% Max Health for 10s (28s cooldown).'],
+      ['War Sacrifice','Skill','+8 All Attributes for 8s, at the cost of -10% max HP as damage over 8s (28s cooldown).'],
+      ['Whirlwind','Skill','Spin with a 2H weapon for 80% weapon damage to all nearby enemies; uninterruptible (32s cooldown).'],
+    ]
+  },
+  rogue:{
+    perks:[
+      ['Ambush','Perk','On leaving Hide: +10% Move Speed and +25% Physical Power for 3s (ends on a successful hit).'],
+      ['Back Attack','Perk','Attacking from behind (120°) grants +30% Physical Power.'],
+      ['Creep','Perk','Crouching (0.5s+): quieter footsteps, +10% Move Speed, -50% monster detection radius.'],
+      ['Dagger Mastery','Perk','With daggers: +10% Physical Power and +1 True Physical Damage.'],
+      ['Double Jump','Perk','Extra jump in the air, at the cost of some move speed.'],
+      ['Hide Mastery','Perk','Hide skill lasts 1.5x longer and cooldown x0.7.'],
+      ['Jokester','Perk','You and party members within 6m get +2 All Attributes.'],
+      ['Lethal Mark','Perk','A throwing knife hit gives the target -15% Physical Damage Reduction for 8s (doesn\'t stack).'],
+      ['Pickpocket','Perk','Steal a random item from a nearby enemy\'s inventory; hide isn\'t broken by being bumped into.'],
+      ['Poisoned Weapon','Perk','A successful hit poisons (4 magical damage over 4s, stacks up to 5x) and lowers incoming healing by -10%.'],
+      ['Stealth','Perk','While hiding: 10 steps of extra movement freedom + move speed per remaining step.'],
+      ['Thrust','Perk','With daggers: +15% extra Armor Penetration.'],
+      ['Traps and Locks','Perk','Unlock locks without a lockpick and detect/disarm traps within 4.5m.'],
+      ['Trickster','Perk','With throwables: +20% Action Speed.'],
+      ['Veil of Shadows','Perk','Below 30% HP: automatic 6s stealth + 10% Move Speed (48s cooldown).'],
+    ],
+    skills:[
+      ['Caltrops','Skill','Places caltrops (10 damage + -50% move speed, 1.5m radius, 3 charges, 28s cooldown).'],
+      ['Cut Throat','Skill','On a hit: silence 2s, blocking skills/spells (18s cooldown).'],
+      ['Dual Strike','Skill','Strike with both daggers simultaneously for combined damage (18s cooldown).'],
+      ['Hide','Skill','Turn invisible for 8s; 2 charges, breaks on action or contact (32s cooldown).'],
+      ['Rupture','Skill','Next hit makes the target bleed (15 damage over 5s, stacks up to 5x, 24s cooldown).'],
+      ['Shadowstep','Skill','12s buff: your next dagger hit teleports you directly behind the target (30s cooldown).'],
+      ['Smoke Pot','Skill','A 6m/8s smoke screen that slows enemies inside by -5% Move Speed (60s cooldown).'],
+      ['Sneak Attack','Skill','Next melee hit +10 damage, +10 extra if the target is not in combat (22s cooldown).'],
+      ['Tumbling','Skill','A backward roll, very short cooldown (0.5s).'],
+      ['Weakpoint Attack','Skill','On a melee hit: -30% Armor Rating on the target for 3s (24s cooldown).'],
+    ]
+  },
+  ranger:{
+    perks:[
+      ['Camping Mastery','Perk','+1500% Interaction Speed when setting up campfires, 2x duration.'],
+      ['Chase','Perk','Detects recent footsteps within 5.5m and hears enemies from further away.'],
+      ['Crippling Shot','Perk','A leg hit with a projectile gives -40% Move Speed for 1s.'],
+      ['Crossbow Mastery','Perk','With crossbows: +5% Physical Power and +50% Action Speed while reloading.'],
+      ['First Aid','Perk','+150% use speed of bandages/surgical kits, also usable on allies.'],
+      ['Kinesthesia','Perk','Moving with the bowstring drawn grants a +15% movement multiplier.'],
+      ['Longshot Expert','Perk','Extra damage at greater range (up to +10 damage, from 7m to 15m).'],
+      ['Nimble Hands','Perk','With a bow: +15% base draw speed.'],
+      ['Point-Blank Expert','Perk','+3 True Physical Damage on targets within 6m.'],
+      ['Purge Shot','Perk','A ranged hit removes a random magical buff + 3 True Magical Damage on removal.'],
+      ['Quick Reload','Perk','Reloading a bow/firearm grants +50% Action Speed.'],
+      ['Ranged Weapons Mastery','Perk','With ranged weapons: +5% Physical Power.'],
+      ['Sharpshooter','Perk','With ranged weapons: +15% Headshot Damage Modifier.'],
+      ['Spear Proficiency','Perk','Gain the ability to wield spears; +0.5% Move Speed with a spear.'],
+      ['Windfletch','Perk','+15% projectile speed of arrows and bolts.'],
+    ],
+    skills:[
+      ['Back Step','Skill','Quickly retreat 4m in 0.2s, also usable in the air (12s cooldown).'],
+      ['Field Ration','Skill','Forage food and restore 40 HP (2 uses, rechargeable, 24s cooldown).'],
+      ['Explosive Shot','Skill','For 8s, bow/crossbow arrows explode after 3s (7 magical damage + burn, 22s cooldown).'],
+      ['Forceful Shot','Skill','Bow attacks gain a knockback effect for 10s (18s cooldown).'],
+      ['Multishot','Skill','Fire 5 arrows at once in a cone, each dealing 100% damage (22s cooldown).'],
+      ['Overdraw','Skill','A fully drawn bow grants +25% Physical Power per 1.25s, stacking up to 3x over 12s (22s cooldown).'],
+      ['Penetrating Shot','Skill','For 8s, +50% Headshot Penetration, +25% Armor Penetration and projectiles pierce targets (18s cooldown).'],
+      ['Quick Fire','Skill','+50% Action Speed with bows for 8s (18s cooldown).'],
+      ['Quickshot','Skill','Fire multiple arrows in quick succession (2 Longbow / 3 Recurve / 4 Survival Bow, 22s cooldown).'],
+      ['True Shot','Skill','Greatly increased projectile speed + 8% Physical Power for 8s (18s cooldown).'],
+    ]
+  },
+  wizard:{
+    perks:[
+      ['Arcane Feedback','Perk','Arcane damage grants stacking +3% Cast Speed and +3% Arcane Power (max 5 stacks, 7s).'],
+      ['Arcane Mastery','Perk','+5% Arcane Power and -0.5s cast time on Arcane spells.'],
+      ['Fire Mastery','Perk','+5% Fire Power; burns last longer, deal more damage and give -50% incoming healing on the target (4s).'],
+      ['Ice Mastery','Perk','Ice damage freezes the target\'s feet (0.5s immobile).'],
+      ['Ice Shield','Perk','+20 Armor Rating (while off cooldown); melee attackers get frostbite (-20% speed/action speed, 0.5s, 5s cooldown).'],
+      ['Mana Surge','Perk','+10% Magical Power Bonus.'],
+      ['Melt','Perk','Fire damage gives the target -15% Physical and -10% Projectile Damage Reduction for 2s.'],
+      ['Quick Chant','Perk','+15% Spell Casting Speed.'],
+      ['Reactive Shield','Perk','On taking damage: 15 shield for 3s (12s cooldown).'],
+      ['Sage','Perk','+15% Knowledge Bonus.'],
+      ['Spell Overload','Perk','-20% Knowledge Bonus, but +60% Max Spell Count Bonus (rounded down).'],
+      ['Staff Mastery','Perk','With a staff: +2 Buff Magical Damage as base damage.'],
+    ],
+    skills:[
+      ['Arcane Shield','Skill','15 shield (50% scaling) for 12s; when fully absorbed, an Arcane explosion deals 5 damage within 2m (25s cooldown).'],
+      ['Intense Focus','Skill','Reduces the cast time of your next spell to 0.1s (18s cooldown).'],
+      ['Meditation','Skill','Restores spells (34 SP/0.75s) over 24s; counts as resting, works with campfires (45s cooldown).'],
+      ['Spell Memory','Skill','Grants the ability to memorize spells for use in the dungeon.'],
+      ['Spell Memory 2','Skill','Grants the ability to memorize additional spells.'],
+    ],
+    signatureSpells:['Zap (T1, hitscan)','Fireball (T4, AoE burst)','Magic Missile (T3, homing)','Ice Bolt (T2, slow)','Chain Lightning (T6, bounces to 3 targets)','Haste (T3, speed+cast speed buff)','Invisibility (T4)']
+  },
+  cleric:{
+    perks:[
+      ['Advanced Healer','Perk','+5 Outgoing Magical Healing.'],
+      ['Blunt Weapon Mastery','Perk','With a mace: +10% Physical Power (doesn\'t work on staffs).'],
+      ['Brewmaster','Perk','Alcohol no longer gives drunk penalties, +10 Strength and 1.5x longer duration.'],
+      ['Faithfulness','Perk','+15% Divine Power; a successful Divine attack gives the target -15% Move Speed for 1s (3s cooldown).'],
+      ['Holy Aura','Perk','+15 Armor Rating and +15 Magical Resistance for yourself and allies within 6m.'],
+      ['Holy Water','Perk','Drinking removes curses/harmful effects and grants Bless.'],
+      ['Kindness','Perk','Heal yourself for 30% of any heal you cast on someone else.'],
+      ['Over Healing','Perk','Excess healing becomes bonus HP (up to 20% max HP), decaying at -2%/s.'],
+      ['Perseverance','Perk','-2 Physical/-2 Magical Absolute Reduction on all incoming damage (min. 1).'],
+      ['Protection from Evil','Perk','-30% Debuff Duration Bonus.'],
+      ['Requiem','Perk','+100% Cast Speed while resurrecting, ally returns with only -50% HP loss; no self-sacrifice at an Altar of Sacrifice.'],
+      ['Undead Slaying','Perk','+20% Undead Race Damage Bonus.'],
+    ],
+    skills:[
+      ['Divine Protection','Skill','+30% Physical Damage Reduction for 6s (45s cooldown).'],
+      ['Holy Purification','Skill','After a 1.5s cast: 100 Divine damage to all Undead within 7.5m (45s cooldown).'],
+      ['Judgement','Skill','After a 1s channel: 25 Divine damage + -30% Move Speed on a target within 5m (28s cooldown).'],
+      ['Smite','Skill','For 7s, melee hits deal an extra instance of 10 Divine damage (18s cooldown).'],
+      ['Spell Memory / Spell Memory 2','Skill','Grants access to (additional) spells such as Heal, Bless and Resurrection.'],
+    ],
+    signatureSpells:['Bless (T1, +2 All Attributes)','Lesser Heal (T3)','Divine Strike (T2, weapon buff)','Holy Strike (T4, AoE burst)','Holy Light (T5, heal or undead damage)','Sanctuary (T6, AoE heal+dmg zone)','Resurrection (T8, revives a fallen ally)']
+  },
+  bard:{
+    perks:[
+      ['Charismatic Performance','Perk','Upgrades a \'Good\' performance to \'Perfect\'.'],
+      ['Dancing Feet','Perk','+10 Move Speed while holding an instrument.'],
+      ['Fermata','Perk','+5 Resourcefulness.'],
+      ['Jolly Time','Perk','Drinking Ale heals 5 HP and grants +5 Move Speed and +5 Vigor while drunk.'],
+      ['Lore Mastery','Perk','+30% Regular Interaction Speed and +10 Memory Capacity.'],
+      ['Melodic Protection','Perk','While playing songs: +25% Physical and 25% Magical Damage Reduction.'],
+      ['Rapier Mastery','Perk','With a rapier: +3 Physical Buff Weapon Damage and +5% Action Speed (also off-hand).'],
+      ['Reinforced Instruments','Perk','+50% Physical Power when attacking with an instrument as a weapon (not on songs).'],
+      ['Story Teller','Perk','Party members within 6m get +5 Will and +3 Knowledge.'],
+      ['Superior Dexterity','Perk','+50% Item Equip Speed when switching between weapons/utility.'],
+      ['Wanderer\'s Luck','Perk','+100 Luck when opening treasure chests.'],
+      ['War Song','Perk','Successfully performed songs grant you + allies within 6m +3 Physical Weapon Damage for 6s.'],
+    ],
+    skills:[
+      ['Dissonance','Skill','Silences enemies within 6m for 2s, blocking spellcasting (24s cooldown).'],
+      ['Encore','Skill','Your next song auto-plays perfectly and resets buff duration on yourself + allies (40s cooldown).'],
+      ['Party Maker','Skill','Removes/immunizes drunk effects (15s); drinking during immunity heals 5 HP (40s cooldown).'],
+      ['Music Memory','Skill','Can store up to 5 songs.'],
+      ['Music Memory 2','Skill','Can store up to 5 additional songs.'],
+    ],
+    signatureSpells:['Rousing Rhythms (+2 All Attributes, group)','Accelerando (move speed stacks)','Shriek of Weakness (heavily weakens enemies)','Ballad of Courage (+physical power, group)','Tranquility (reusable heal-over-time)','Song of Silence (silences enemies)','Peacemaking (prevents fighting in an AoE)']
+  },
+  warlock:{
+    perks:[
+      ['Antimagic','Perk','+20% Damage Reduction against magical elements (except Divine, Curse, Neutral).'],
+      ['Curse Mastery','Perk','Extends the base duration of all your curses; can have 2 curse variants active at once.'],
+      ['Dark Enhancement','Perk','+20% Dark Power Bonus on dark magic spells.'],
+      ['Dark Reflection','Perk','Reflects 15 Dark damage to melee attackers (15s cooldown, consumes Darkness Shards).'],
+      ['Demon Armor','Perk','Grants the ability to wear plate armor, but -10% Spell Casting Speed.'],
+      ['Immortal Lament','Perk','Spells can no longer bring you below 1 HP; below 5% HP you gain +100% outgoing heal mod for 5s (10s cooldown).'],
+      ['Infernal Pledge','Perk','+10% Undead/Demon Race Damage Reduction, +15% Undead/Demon Race Damage Bonus.'],
+      ['Malice','Perk','+15% Will Bonus.'],
+      ['Shadow Touch','Perk','Melee hits deal +2 True Dark damage and heal you for 2 HP.'],
+      ['Soul Collector','Perk','The finishing blow on an enemy grants you a Darkness Shard.'],
+      ['Torture Mastery','Perk','Curses heal you 2 HP per instance of damage dealt (15% scaling); spells cost 2x as much HP.'],
+      ['Vampirism','Perk','+20% Outgoing Magical Healing Mod.'],
+    ],
+    skills:[
+      ['Blood Pact','Skill','Temporarily transform into Demon form: +30 max HP, +50 Armor, +50 Magic Resist, but HP loss per second.'],
+      ['Unbind','Skill','(Only during Blood Pact) Return to your true self, ending the Pact\'s effects.'],
+      ['Exploitation Strike','Skill','(Only during Blood Pact) Unarmed hits deal extra Evil damage + self-heal (28s cooldown).'],
+      ['Blow of Corruption','Skill','Next attack deals +12 Evil damage and -80% incoming healing on the target for 12s (24s cooldown).'],
+      ['Dark Offering','Skill','Channel up to 10s: sacrifice HP for stacking +Physical/Magical Power (max 10 stacks, 60s duration, 24s cooldown).'],
+      ['Phantomize','Skill','4s untouchable to melee/projectiles, but -50% Magical Damage Reduction (28s cooldown).'],
+      ['Spell Memory / Spell Memory II','Skill','Grants access to (additional) curses and spells.'],
+    ],
+    signatureSpells:['Curse of Pain (DoT + instant burst)','Curse of Weakness (-25% All Attributes)','Bolt of Darkness (T1 projectile)','Life Drain (channel, 100% lifesteal)','Hellfire (AoE damage through walls)','Eldritch Shield (shield + next spell bonus)']
+  },
+  druid:{
+    perks:[
+      ['Dreamwalk','Perk','On taking damage in human form: 3s spiritual/untouchable (can\'t attack), 12s cooldown debuff.'],
+      ['Enhanced Wildness','Perk','In animal form: +5% Physical Power and +20 Armor Rating.'],
+      ['Force of Nature','Perk','Healing (including self) grants +5 Physical Power per heal tick for 3s if the target isn\'t at full HP.'],
+      ['Herbal Sensing','Perk','Detects herbs within 8m; +150 Luck when harvesting them.'],
+      ['Natural Healing','Perk','Heals yourself + allies within 6m for 1 HP every 3s.'],
+      ['Shapeshift Mastery','Perk','-25% shapeshift time and -25% cooldown of Wild skills, but no more Spirit spells.'],
+      ['Spirit Bond','Perk','Take 20% of the damage from a party member within 6m (max 20 per instance).'],
+      ['Spirit Magic Mastery','Perk','When casting Spirit magic: +10 Magical Power.'],
+      ['Sun and Moon','Perk','Allies + yourself within 6m gain +3 Vigor and +5 Magical Power.'],
+      ['Thorn Coat','Perk','On a melee hit: reflects 5 True Physical damage to the attacker.'],
+      ['Lifebloom Aura','Perk','+1 extra HP per heal tick within 6m, but disables Shapeshifting.'],
+    ],
+    skills:[
+      ['Shapeshift Memory / II','Skill','Grants access to animal forms (Bear, Panther, Rat, Chicken, Penguin).'],
+      ['Spell Memory','Skill','Grants access to nature spells such as healing and zoning.'],
+      ['Insect Predation (Chicken)','Skill','Eats insects to heal based on Resourcefulness (32s cooldown).'],
+      ['Rush (Panther)','Skill','Dash 6m and 2s frenzy state with midair attacks (2 charges, 24s cooldown).'],
+      ['Survival Instinct (Rat)','Skill','+20 Move Speed for 4s, followed by a temporary slow (28s cooldown).'],
+      ['Wild Fury (Bear)','Skill','+20% Physical and Magical Damage Reduction for 8s (32s cooldown).'],
+      ['Penguin Dash (Penguin)','Skill','+15% Move Speed in water for 3s (24s cooldown).'],
+    ],
+    signatureSpells:['Nature\'s Touch (heal over time)','Orb of Nature (damage or heal, depending on target)','Entangling Vines (root/CC)','Thorn Barrier (zone damage)','Summon Treant (fighting ally)','Tree of Life (stat + heal buff)']
+  },
+  sorcerer:{
+    perks:[
+      ['Apex of Sorcery','Perk','While casting: 1% movement speed, but +50% Magical Power, +50% Cast Speed, +25% Action Speed.'],
+      ['Mana Fold','Perk','Cooldowns are 0.75x as long, but -15% Cast Speed.'],
+      ['Spell Sculpting','Perk','+25% spell range and +25% AoE radius, but 1.25x cooldown on radial spells.'],
+      ['Spell Stride','Perk','+30% Move Speed while casting two spells at once (merge).'],
+      ['Time Distortion','Perk','-50% cast time on all spells, but 2x cooldown.'],
+      ['Merged Might','Perk','On casting a merge spell: +5 Magical Power; after casting, +5% Move Speed for 2s.'],
+      ['Innate Talent','Perk','+5 Memory Capacity; casting with bare hands grants +5 Magical Power and +10% Cast Speed.'],
+      ['Elemental Fury','Perk','Per 1% HP lost: +0.5% Cooldown Reduction and +0.25% Magical Power (up to ~50%/25% at low HP).'],
+      ['Mana Flow','Perk','Every successful cast within 3s grants stacking +5% Magical Power and +5% Magic Penetration (max 3 stacks).'],
+      ['Lightning Mastery','Perk','+25% Lightning Power; lightning damage has a chance to trigger Electric Shock on nearby targets.'],
+      ['Air Mastery','Perk','+15% Air Knockback Bonus and +50% Air Power.'],
+    ],
+    skills:[
+      ['Sorcery Memory / II','Skill','Grants access to (additional) elemental spells.'],
+      ['Sorcery Combat','Skill','Grants the ability to use magical casting weapons in melee.'],
+    ],
+    signatureSpells:['Fire Arrow (T1, homing burst)','Ice Spear (T2, piercing)','Fireball → Fire Orb (T3, AoE)','Lightning Bolt (T3, channel)','Electric Dash (merge: Vortex+Lightning Bolt, mobility+damage)','Elemental Bolt (merge: Fire Arrow+Water Bolt, fire+ice hybrid)'],
+    note:'Sorcerer can cast two spells at once (one per hand) to \'merge\' them into a more powerful combined spell with no cast time — a unique mechanic no other caster class has.'
+  },
+};
+
+const BESTIARY = [
+  {name:'Skeleton Footman', icon:'skeleton', threat:'low', zone:'Ruins, Crypts, Goblin Caves', attack:'Sword + shield: a diagonal slash followed by a vertical slash as a combo. Also blocks with its own shield. The Nightmare variant adds an extra vertical slash after the diagonal hit.', tips:'Easy to parry/block. Doesn\'t build a combo if you stay at range — bait the first swing and hit back during the recovery.'},
+  {name:'Skeleton Archer', icon:'skeleton', threat:'low', zone:'Ruins, Crypts, Goblin Caves', attack:'Fires arrows at your torso (rather than the head, as with players). The Nightmare variant fires up to 3 arrows in quick succession.', tips:'Priority target in a group — take out the archer first or use cover/doors to break line of sight.'},
+  {name:'Skeleton Champion (mini-boss)', icon:'skeletonElite', threat:'high', zone:'Ruins, Crypts, Ice Caverns', attack:'Two first-stage diagonal slashes (each with 2 possible follow-up combos): a low/high slash, followed by a low/horizontal slash, and finally a lunge thrust or shield bash.', tips:'Every swing is dodgeable with the right crouch direction (see community guides). Bait out all 3 attacks and then punish, or use move speed to step away after the first hit and break the combo.'},
+  {name:'Goblin Warrior', icon:'goblin', threat:'low', zone:'Goblin Caves', attack:'Poison-coated dagger + buckler. Short reach but clearly telegraphed attacks. The Nightmare variant raises its buckler and rushes at you at high speed.', tips:'Let them swing, then hit back — the poison coating deals significant damage-over-time if you do get hit, so avoiding the hit is better than tanking it.'},
+  {name:'Goblin Archer', icon:'goblin', threat:'low', zone:'Goblin Caves', attack:'Small bow, no special mechanics but often stands in groups with Goblin Warriors.', tips:'Easy to kill without a special strategy — the real threat is the group around it, not the archer itself.'},
+  {name:'Zombie', icon:'undead', threat:'low', zone:'Ruins, Goblin Caves, Crypts', attack:'3 attacks: always a poison cloud first (cooldown-based, triggers as soon as its path is blocked), then a right-hand swing and a left-hand swing. The Nightmare variant spawns 2 faster poison clouds.', tips:'You can dodge the poison cloud by standing to the side or behind the zombie. Dodge the right-hand swing by crouching to its left, and the left-hand swing by crouching to its right.'},
+  {name:'Mummy', icon:'undead', threat:'mid', zone:'Crypts, Sunken Vault, Goblin Caves', attack:'Slow but heavily telegraphed attacks: a lunge attack that roots (immobilizes) on a hit. The Spider Mummy variant stacks a slow effect per hit.', tips:'Hit-and-run: strike and step back after each swing. The lunge is deceptive because mummies look so slow — don\'t underestimate it.'},
+  {name:'Death Skull', icon:'flyer', threat:'low', zone:'Goblin Caves, Ruins', attack:'A flying bat-like creature that rushes once its eyes glow yellow. The Nightmare variant attacks twice in a row.', tips:'Duck or step aside as soon as the eyes glow to dodge the rush. Dies in 1-2 hits but is harder to hit due to its flying movement.'},
+  {name:'Ghoul', icon:'undead', threat:'mid', zone:'Crypts, Ice Caverns', attack:'Fast and aggressive with poisonous claw attacks; higher attack speed than a regular zombie.', tips:'Kite where possible with ranged classes; melee classes need to block/parry on time since the higher attack speed leaves less room to react.'},
+  {name:'Orc', icon:'goblin', threat:'mid', zone:'Ruins, Highlands', attack:'Heavier, harder hits than goblins, with a more aggressive (berserker) variant that seeks out open space.', tips:'Fight orc groups in narrow corridors rather than open terrain to avoid being surrounded.'},
+  {name:'Ogre / Cave Troll (boss)', icon:'ogre', threat:'high', zone:'Goblin Caves (central boss room)', attack:'Slow but very heavy hits; has a powerful two-handed attack that ranks among the boss\'s strongest single hits.', tips:'Stay mobile and use obstacles to break line of sight between hits. A shield and correctly timed crouching/dodging are crucial here — the combination of timing and slow-but-hard hits is the core of this fight.'},
+  {name:'Wraith / Spectre', icon:'wraith', threat:'mid', zone:'Crypts, Sunken Vault', attack:'Can phase through walls/objects and often surprises players from an unexpected angle.', tips:'Keep distance as a caster; melee classes must react quickly to the attack animation since the wraith approaches less predictably than ground-based mobs.'},
+  {name:'Elite/Nightmare variants (general)', icon:'eliteMark', threat:'high', zone:'Everywhere, more often via red portals or in High Roller', attack:'Elite (red coloring) and Nightmare (black/gray/purple) have more HP, damage and speed than Normal, and often gain an extra mechanic: e.g. a lethal shield-shock (Skeleton Guardsman), an extra combo swing, or double poison clouds.', tips:'Treat every elite/nightmare mob as a mini-boss: take the extra mechanic seriously, they are substantially more dangerous than their Normal counterpart.'},
+];
+
+/* Source: official Dark and Darker Wiki (Bosses page, Dungeon page, Patch Notes 6.9-6.11) — current dungeon campaigns, floors and boss mechanics. */
+const MAP_ICON_LEGEND = [
+  {icon:'💀', label:'Boss room', desc:'Location of the end boss of that floor. Often behind a heavy door, a lift, or a specific object (lever/pressure plate) that activates the room.'},
+  {icon:'🪜', label:'Stairs / Static Down', desc:'A normal staircase to the next regular floor, or a red "Static Down" portal to a secret, deeper floor (e.g. Ruins → Crypt → Inferno).'},
+  {icon:'🌀', label:'Extraction portal', desc:'Portals that let you extract with your loot. Some are active immediately, others need to be activated first.'},
+  {icon:'🛗', label:'Lift / Elevator', desc:'A fixed, often centrally located lift that continuously moves up and down — fast but very visible to other players.'},
+  {icon:'🕯️', label:'Shrine', desc:'Altars/shrines that grant temporary buffs or (at an Altar of Sacrifice) let a fallen teammate be resurrected.'},
+  {icon:'📦', label:'Treasure chest / Treasure Hoard', desc:'Large chest clusters with above-average loot, often heavily guarded by mobs or located near a mini-boss.'},
+  {icon:'⛏️', label:'Ore / Herb node', desc:'Gatherable resources (ores, herbs) for crafting quests and the Alchemist/Blacksmith.'},
+  {icon:'⚠️', label:'Trap', desc:'Spike traps, snares and other environmental hazards — especially numerous around boss rooms and treasure chests.'},
+];
+
+const BOSS_INFO = {
+  caveTroll:{name:'Cave Troll', race:'Troll / Humanoid / Beast', summary:'The classic Goblin Caves boss: extremely high HP and heavy hits, but slow and with little variation in its move set.', phases:[
+    'Basic combos: left-to-right and right-to-left swings, and an overhead "head-up" slam — all three apply a Slow on a hit.',
+    'Ground attacks: a targeted ground slam plus a radius hit around it (also Slow), and two spinning attacks (high/low) that hit a wider area.',
+    'Continuously regenerates HP slowly (2 HP/tick) for as long as the fight lasts — the longer you stall, the more you have to make up for.',
+  ], tip:'Stay mobile and use a shield to block the predictable, slow combos. Ranged classes can kite comfortably at range since none of its attacks are particularly fast.'},
+  ghostKing:{name:'Ghost King', race:'Undead / Ghost', summary:'Ice-themed boss in Frost Mountain (Ice Cavern) who becomes especially dangerous as his Curse of Chilling stacks build up.', phases:[
+    'Curse of Chilling stacks (up to 30x) on every hit and gradually slows you more and more — a long fight literally becomes harder to escape.',
+    '"Eating" grab: if he grabs you, you lose 95% of your max HP and can\'t move for 15s — this must be dodged or interrupted at all costs.',
+    'Scream temporarily lowers everyone\'s max HP in the room by 45%; Earth Quake is a wide physical/magical AoE hit; the Teleport attack surprises you from another angle.',
+  ], tip:'Prioritize dodging the grab attack above everything else — the rest of the fight is survivable, a successful "Eating" often isn\'t.'},
+  frostWyvern:{name:'Frost Wyvern', race:'Dragon / Wyvern / Beast', summary:'Flying dragon boss in the Ice Abyss (Frost Mountain\'s second floor) with breath attacks and a temporary invulnerability shield.', phases:[
+    'Ground and air combos: tail hits, forward claw attacks and two-handed slams that all lower Action Speed on a hit.',
+    'Breath attack (ground or air) with a radius explosion; leap attacks that close distance with the same slow effects.',
+    'Can grant itself a temporary Frost Shield (full damage immunity) and hugely boost its own move speed — wait out this window instead of fighting through it.',
+  ], tip:'Save burst damage for the moments outside the Frost Shield window; attacking during the shield is pointless.'},
+  lich:{name:'Lich', race:'Undead / Lich', summary:'The classic Crypt boss: a ranged magic caster that plays with curses based on distance between players rather than pure DPS.', phases:[
+    'Ranged attacks: Close/Normal/Strong Attack, scaling in damage depending on how close or far you are.',
+    'Curse of Gathering punishes players standing too close together; Curse of Isolation punishes players who wander too far from their team — both are stack-based and can eat away a large chunk of your max HP.',
+    'Frenzy phase: the Lich gets a sizable movement and action speed boost and a "Death Swarm" that deals stacking true damage — the most dangerous phase of the fight.',
+    'Can grant itself a Soul Shield that absorbs a substantial amount of damage before you break through it.',
+  ], tip:'As a team, keep a balanced distance — not too close together (Gathering) and not too spread out (Isolation). Save cooldowns for the Frenzy phase.'},
+  skeletonWarlord:{name:'Skeleton Warlord', race:'Undead / Skeleton', summary:'The main boss of Inferno: a well-armed undead general who uses his Royal Guards and a shield phase to drag out the fight.', phases:[
+    'Combo attacks (5 variants) with magical damage, plus paralyzing throwing knives that stack up to -75% Move Speed.',
+    'Summons Skeleton Royal Guards who themselves throw knives and speed up the Warlord via "Soul Pass" as more of them stay alive.',
+    'Shield phase: becomes temporarily fully immune to damage — focus the Royal Guards during this phase instead of the boss itself.',
+    'Breaking his shield triggers a big Explosion attack as punishment — don\'t stand too close when that happens.',
+  ], tip:'Clear the Royal Guards first as soon as the shield phase begins; that prevents the Warlord from getting progressively faster via Soul Pass.'},
+  cyclops:{name:'Cyclops', race:'Cyclops / Humanoid / Beast', summary:'The classic Ruins boss: a giant one-eyed creature with heavy hits and two dangerous crowd-control attacks.', phases:[
+    'Basic melee combo (3 hits) plus a "Riot" attack with increased damage and a rush attack where he charges at you.',
+    'Sprinkle Soil throws dirt that blinds you for 10s (Blinder) — an attack that\'s easy to overlook but completely removes your view of the fight.',
+    'Petrification fully immobilizes you for 6s (no movement, no attacks) — one of the most dangerous CC effects among all bosses, often followed by a free hit from the Cyclops.',
+    'Stomp is a wide AoE hit with an added slow.',
+  ], tip:'Keep an escape route in mind as soon as you\'re blinded by Sprinkle Soil — you can\'t see Petrification coming if you can\'t see anything.'},
+  demonOverseer:{name:'Demon Overseer', race:'Demon / Human / Humanoid', summary:'Winged demon boss from Inferno (Demon Overseer\'s Dominion module) with heavy fire damage and dive attacks.', phases:[
+    'Melee combos: horizontal/reverse slashes, an overhead slam and quick stab attacks.',
+    'Wing Dive attacks (slash/sweep) performed from the air, partly with Fire Burn damage-over-time.',
+    'Flame Breath and Flame Explosion are wide fire AoEs; Flame Push additionally knocks you away during the burn.',
+  ], tip:'Stay out of the path of its dive attacks; most of the damage comes from the persistent Fire Burn DoT, so actively cleanse or heal it off.'},
+  fireColossus:{name:'Fire Colossus', race:'Golem / Elemental / Construct', summary:'A giant lava golem, presumably the heaviest boss of the Firedeep floor (the deepest layer of The Ashen Range).', phases:[
+    'Multiple directional slam variants (front/back/left/right slam) that can each add Lava Burn (damage-over-time).',
+    'Foot stomp and a two-hand ground strike as wide AoE punishments with extra lava burn.',
+    'Periodic lava eruptions and a "Fury of Magma" attack that turn the floor around it into hazardous terrain.',
+  ], tip:'This is mainly a positioning fight: keep moving constantly to never stand in a lava-eruption zone, and keep burn healing ready.'},
+  spectralKnight:{name:'Spectral Knight', race:'Undead / Ghost', summary:'A ghostly knight with very high mobility (the highest move speed of all bosses) and heavy one-off finishers.', phases:[
+    'Fast slash combos and a shoulder charge to quickly close the distance.',
+    'Rush Thrust attacks, which he also uses as a setup for his heaviest hit ("Rush Thrust For Soul Slash").',
+    'Soul Shockwave leaves behind a "Dead Rift": a DoT zone that also lowers your move speed.',
+    'Soul Slash (up/down) is his heaviest single hit — a clear windup, so it\'s recognizable if you watch the animation.',
+  ], tip:'Use his high mobility against him: he closes distance fast, so plan your escape or counterattack before he gets close.'},
+  ancientStingray:{name:'Ancient Stingray', race:'Beast / Aquatic', summary:'The underwater boss of The Blue Maelstrom — a large part of this fight takes place while swimming.', phases:[
+    'Swim attacks (left/right) and short dashes while it circles around you in the water.',
+    'Water Arrow projectiles (including turning variants) fired at range.',
+    'Lightning Nova is a heavy AoE shock; tail attacks (up/down) additionally apply Poison.',
+    '"Divine Judgment" and "Pop Out" attacks are its heaviest single hits, often used as it surfaces from the water.',
+  ], tip:'Prepare for a large part of the fight underwater — account for limited visibility and the reduced freedom of movement that comes with swimming.'},
+  bladehand:{name:'Bladehand', race:'Human / Humanoid', summary:'A human swordsman boss in The Blue Maelstrom (Bladehand\'s Refuge module), with a surprising number of attack variants for a "simple" swordsman.', phases:[
+    'Extensive melee combos: horizontal/vertical slashes, upper slash, thrust and rush variants.',
+    'Cannon Fire and Ballista attacks give him ranged/AoE options alongside pure melee, including a "Ballista Falling" attack from above.',
+    'Reflect Melee can bounce your own melee attack back at you if you\'re not careful — a unique counterattack mechanic not found on any other boss.',
+  ], tip:'Be careful about attacking non-stop without pause — the Reflect Melee mechanic punishes impatient button-mashing.'},
+};
+
+const MAPS = [
+  {
+    name:'The Ashen Range — Goblin Caves', tier:'Entry level', desc:'First floor of the Ashen Range campaign. Accessible caves full of goblin camps, ideal for learning classes.',
+    bossId:'caveTroll',
+    features:['Underground caves with narrow corridors (Cave Swamp, Forest Path modules)','Central lift/elevator as a fast but very visible extraction route','Relatively short, forgiving matches'],
+    keyElements:[
+      {type:'boss', label:'Cave Troll boss room', note:'Central on the map, reached via a ramp leading to a stone door.'},
+      {type:'stairs', label:'Stairs to Firedeep', note:'Deeper, lava-themed floor of the same campaign — heavier mobs and better loot.'},
+      {type:'exit', label:'Extraction portals', note:'Spread across the outer edges, often near goblin camps.'},
+    ]
+  },
+  {
+    name:'The Ashen Range — Firedeep', tier:'Advanced', desc:'A deeper, lava-soaked floor beneath the Goblin Caves (Lava Crossway module), with heavier mobs and the Fire Colossus as the (presumed) end boss.',
+    bossId:'fireColossus',
+    features:['Lava terrain with environmental hazards alongside regular mobs','Increased Nightmare spawn rate in High-Roller','Separate escape lift in the Lava Crossway module'],
+    keyElements:[
+      {type:'boss', label:'Fire Colossus boss room', note:'Heavily guarded lava arena; expect consecutive AoE eruptions.'},
+      {type:'exit', label:'Extraction portals', note:'More limited than on the Goblin Caves floor — plan your route in advance.'},
+    ]
+  },
+  {
+    name:'The Forgotten Castle — Ruins', tier:'Normal', desc:'First floor of the Forgotten Castle campaign: above-ground ruins with the Cyclops as the end boss.',
+    bossId:'cyclops',
+    features:['Above-ground layout with towers and great halls','Popular PvP hotspots around central loot halls','Access to the next floor (Crypt) via stairs or a red Static Down']
+    ,keyElements:[
+      {type:'boss', label:'Cyclops boss room', note:'Watch out for the Petrification and Sprinkle Soil attacks — see boss info below.'},
+      {type:'stairs', label:'Stairs / Static Down to The Crypt', note:'The red Static Down leads to the next, more dangerous floor of the same campaign.'},
+      {type:'exit', label:'Extraction portals', note:'Spread across the outer edge of the ruins.'},
+    ]
+  },
+  {
+    name:'The Forgotten Castle — The Crypt', tier:'Advanced', desc:'Second floor, underground and undead-heavy, with the Lich as the end boss.',
+    bossId:'lich',
+    features:['Narrow corridors (Long Bridge, Wheel, Barracks modules) — strong for chokepoint tactics','Undead-heavy mob pool','Access to Inferno via a red Static Down']
+    ,keyElements:[
+      {type:'boss', label:'Lich boss room', note:'Keep a balanced distance as a team — both too close together and too spread out are dangerous (see boss info).'},
+      {type:'stairs', label:'Static Down to Inferno', note:'A hidden, red portal — the deepest and heaviest floor of this campaign.'},
+      {type:'exit', label:'Extraction portals', note:'Spread throughout the crypt corridors.'},
+    ]
+  },
+  {
+    name:'The Forgotten Castle — Inferno', tier:'End-game', desc:'The deepest and heaviest floor of the Forgotten Castle campaign, only reachable via the red Static Down in The Crypt. Bosses vary per run.',
+    bossId:'skeletonWarlord',
+    features:['Brimstone Falls module with visible sulfur waterfalls','Demon Overseer\'s Dominion as a separate, heavily guarded area','Highest loot table of the campaign, recommended only with a coordinated trio'],
+    keyElements:[
+      {type:'boss', label:'Skeleton Warlord / Demon Overseer', note:'Multiple heavy bosses possible per run — come prepared for either (see boss info below).'},
+      {type:'exit', label:'Extraction portals', note:'Scarce and heavily guarded — often a PvP hotspot in the late stage of a run.'},
+    ]
+  },
+  {
+    name:'Frost Mountain — Ice Cavern', tier:'Advanced', desc:'Snowy caves (Icicle Cave module) with the Ghost King as the end boss.',
+    bossId:'ghostKing',
+    features:['Ice-themed mobs with frost debuffs','Slippery terrain affects movement','Access to Ice Abyss via a hidden/aurora passage'],
+    keyElements:[
+      {type:'boss', label:'Ghost King boss room', note:'Absolutely avoid his grab attack — see boss info below.'},
+      {type:'stairs', label:'Passage to Ice Abyss', note:'Often via a void/aurora effect rather than a normal staircase.'},
+      {type:'exit', label:'Extraction portals', note:'Spread across the outside of the caves.'},
+    ]
+  },
+  {
+    name:'Frost Mountain — Ice Abyss', tier:'End-game', desc:'A deeper, even more dangerous floor with unique attack patterns not found on other maps, and the Frost Wyvern as the end boss.',
+    bossId:'frostWyvern',
+    features:['Attack patterns unique to this floor — proceed carefully here','Underwater/void passages that affect routes and homing spells','Increased Nightmare spawn rate in High-Roller'],
+    keyElements:[
+      {type:'boss', label:'Frost Wyvern boss room', note:'Wait out its Frost Shield window before committing to a burst rotation.'},
+      {type:'exit', label:'Extraction portals', note:'Partly via underwater/void passages.'},
+    ]
+  },
+  {
+    name:'The Blue Maelstrom', tier:'End-game', desc:'A water and shipwreck campaign (Ship Graveyard) with two bosses: the Ancient Stingray in the water and Bladehand in his Refuge module.',
+    bossId:'ancientStingray',
+    secondBossId:'bladehand',
+    features:['Flooded decks and narrow ship corridors','Blue Hole and Starfish Valley as separate ore/loot modules','Increased Nightmare spawn rate in High-Roller'],
+    keyElements:[
+      {type:'boss', label:'Ancient Stingray (underwater arena)', note:'Largely a swimming fight — see boss info below.'},
+      {type:'boss', label:'Bladehand\'s Refuge', note:'A separate boss room with a human swordsman boss who also has ranged/AoE attacks.'},
+      {type:'exit', label:'Extraction portals', note:'Spread among the shipwrecks and coastal points.'},
+    ]
+  },
+];
+
+const ATTRS_INFO = [
+  {name:'Strength', color:'var(--str)', desc:'Increases Base Health (together with Vigor) and Physical Power. Crucial for Fighter, Barbarian, and the damage scaling of Ranger bows (especially Longbow).'},
+  {name:'Vigor', color:'#c96b6b', desc:'Together with Strength determines your Base Health, and also governs your Health Recovery Bonus (how fast your HP heals while resting). Useful for almost every class, extra critical for fragile casters.'},
+  {name:'Agility', color:'var(--agi)', desc:'Determines your base Move Speed and has a smaller effect on Action Speed. Core stat for Rogue; an important secondary stat for Ranger and Druid (Panther form).'},
+  {name:'Dexterity', color:'var(--steel)', desc:'Governs Action Speed, Manual Dexterity (how fast you play Bard instruments), Item Equip Speed and part of your Regular Interaction Speed. Core stat for Bard and Rogue.'},
+  {name:'Will (Willpower)', color:'var(--wil)', desc:'Determines Magical Power, Magic Power Bonus, Magical Resistance, Magical Damage Reduction, and Buff/Debuff Duration. Base stat for Cleric, Wizard, Warlock, Bard, Druid and Sorcerer.'},
+  {name:'Knowledge', color:'var(--kno)', desc:'Determines Spell Casting Speed, Memory Capacity (how many spells/songs you can memorize) and Memory/Spell Recovery (how fast your spell uses recharge). Important for every caster class.'},
+  {name:'Resourcefulness', color:'var(--res)', desc:'Determines part of your Regular Interaction Speed, your Cooldown Reduction, and your Persuasiveness (duration of Bard songs). Relevant for almost every class, crucial for Bard and Ranger (traps).'},
+];
+
+const GEAR_STATS = [
+  {name:'Physical Power (Bonus)', tag:'Damage', desc:'Percentage increase to physical damage, derived from Strength. Top priority for Fighter, Barbarian, Ranger and melee-hybrid builds.'},
+  {name:'Magical Power (Bonus)', tag:'Damage', desc:'Percentage increase to magical damage and healing, derived from Will. Core stat for every caster class.'},
+  {name:'Additional Physical/Magical Damage', tag:'Damage', desc:'Flat extra damage per instance (separate from Power Bonus) — counts on every hit/tick, including DoT effects like Rogue\'s Poisoned Weapon.'},
+  {name:'True Physical/Magical Damage', tag:'Damage', desc:'Damage that completely ignores armor/resistance. Rare but very strong affix, relevant to Rogue daggers and Ranger\'s Survival Bow build, among others.'},
+  {name:'Armor Penetration / Magic Penetration', tag:'Damage', desc:'Lowers your target\'s effective Armor Rating/Magic Resistance, increasing your effective damage against heavily armored opponents.'},
+  {name:'Base Health (Max HP)', tag:'Survivability', desc:'Direct increase to your HP pool, derived from Strength + Vigor. Valuable for every class, extra critical for fragile casters (Wizard/Sorcerer).'},
+  {name:'Health Recovery Bonus', tag:'Survivability', desc:'Increases how fast your HP recovers while resting (derived from Vigor). Important for solo play and between fights.'},
+  {name:'Armor Rating', tag:'Survivability', desc:'Reduces incoming physical damage (Physical Damage Reduction) — scales with the type of armor (cloth/leather/chain/plate) along a curve.'},
+  {name:'Magical Resistance', tag:'Survivability', desc:'Reduces damage from enemy spells and curses — important against caster-heavy lobbies.'},
+  {name:'Move Speed', tag:'Mobility', desc:'Derived from Agility, plus loose +Move Speed affixes on boots/cloaks. Essential for kiting (Ranger/Rogue) and avoiding danger.'},
+  {name:'Action Speed', tag:'Tempo', desc:'Attack, block and react faster per second — especially valuable for Rogue and light melee builds.'},
+  {name:'Spell Casting Speed', tag:'Tempo', desc:'Shortens spell cast time, crucial for avoiding interrupts as a caster.'},
+  {name:'Manual Dexterity', tag:'Tempo', desc:'Increases the play speed of Bard instruments — a niche but important stat specific to Bard.'},
+  {name:'Item Equip Speed', tag:'Tempo', desc:'Faster weapon/utility switching — especially relevant for Bard (instrument swaps) and Rogue.'},
+  {name:'Regular / Magical Interaction Speed', tag:'Utility', desc:'Faster opening of doors/chests, placing traps or using magical objects. Derived from Dexterity and Resourcefulness (regular) or Will (magical).'},
+  {name:'Cooldown Reduction', tag:'Utility', desc:'Shortens the cooldown of skills/perks (and for Sorcerer, spells too). Derived from Resourcefulness; crucial for Sorcerer builds that revolve around cooldowns.'},
+  {name:'Persuasiveness', tag:'Utility', desc:'Determines the duration of Bard songs (buffs/debuffs). Derived from Resourcefulness — nearly mandatory on any Bard build.'},
+  {name:'Memory Capacity', tag:'Utility', desc:'Determines how many spells/songs/shapeshifts you can memorize at once. Derived from Knowledge.'},
+  {name:'Buff Duration / Debuff Duration', tag:'Utility', desc:'Extends how long buffs on you (or debuffs on your enemy) stay active. Relevant for almost every class with temporary effects.'},
+  {name:'Luck', tag:'Loot', desc:'Increases the chance of higher-quality loot from chests. A fixed stat on some perks (e.g. Bard\'s Wanderer\'s Luck) and accessories.'},
+  {name:'Impact Power', tag:'Combat', desc:'Determines how well an attack breaks through blocks/parries and destroys props (doors/chests). Relevant for 2H weapons and certain perks (Barbarian\'s Crush).'},
+];
+
+/* ================= RENDER: CLASSES ================= */
+const classGrid = document.getElementById('classGrid');
+const classDetail = document.getElementById('classDetail');
+
+function renderClassGrid(){
+  classGrid.innerHTML = CLASSES.map(c => `
+    <div class="class-card" data-id="${c.id}">
+      <span class="tier tier-${c.tier}">${c.tier}</span>
+      <span class="icon">${c.icon}</span>
+      <h3>${c.name}</h3>
+      <div class="role">${c.role}</div>
+    </div>
+  `).join('');
+  classGrid.querySelectorAll('.class-card').forEach(el=>{
+    el.addEventListener('click', ()=> showClassDetail(el.dataset.id));
+  });
+}
+
+function attrBar(label, val, color){
+  return `<div class="attr-bar-row">
+    <div class="attr-label">${label}</div>
+    <div class="attr-bar"><div class="attr-fill" style="width:${val}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function showClassDetail(id){
+  const c = CLASSES.find(x=>x.id===id);
+  if(!c) return;
+  document.querySelectorAll('.class-card').forEach(el=>el.classList.toggle('selected', el.dataset.id===id));
+
+  classDetail.innerHTML = `
+    <div class="detail-head">
+      <div>
+        <h2>${c.icon} ${c.name}</h2>
+        <div class="role">${c.role}</div>
+        <div class="badge-row">
+          <span class="badge on">${TIER_LABEL[c.tier]} (current meta)</span>
+        </div>
+      </div>
+    </div>
+    <p>${c.summary}</p>
+    <div class="two-col" style="margin-top:18px;">
+      <div class="stat-block">
+        <h4>Attribute profile</h4>
+        ${attrBar('Strength', c.attrs.str, 'var(--str)')}
+        ${attrBar('Agility', c.attrs.agi, 'var(--agi)')}
+        ${attrBar('Willpower', c.attrs.wil, 'var(--wil)')}
+        ${attrBar('Resourcefulness', c.attrs.res, 'var(--res)')}
+        ${attrBar('Knowledge', c.attrs.kno, 'var(--kno)')}
+      </div>
+      <div class="stat-block">
+        <h4>Gear stat priority</h4>
+        <ul class="gearlist">
+          ${c.statPriority.map((s,i)=>`<li><span><span class="priority-pill">${i+1}</span><span class="stat-name">${s}</span></span></li>`).join('')}
+        </ul>
+      </div>
+    </div>
+    <div class="tip-box"><b>Gear focus:</b> ${c.gearFocus}</div>
+    <div class="pc-grid">
+      <div class="pc-box pro"><h4>Pros</h4><ul>${c.pros.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+      <div class="pc-box con"><h4>Cons</h4><ul>${c.cons.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+    </div>
+    <div class="tip-box"><b>Beginner tip:</b> ${c.tip}</div>
+  `;
+  classDetail.classList.add('show');
+  classDetail.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* ================= RENDER: BUILDS ================= */
+const buildGrid = document.getElementById('buildGrid');
+const buildClassFilter = document.getElementById('buildClassFilter');
+
+function renderBuildFilter(){
+  buildClassFilter.innerHTML = `<option value="all">All classes</option>` +
+    CLASSES.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+  buildClassFilter.addEventListener('change', renderBuilds);
+}
+
+function renderBuilds(){
+  const filter = buildClassFilter.value;
+  const list = BUILDS.filter(b => filter==='all' || b.cls===filter);
+  buildGrid.innerHTML = list.map(b=>{
+    const cls = CLASSES.find(c=>c.id===b.cls);
+    return `<div class="info-card">
+      <h3>${cls.icon} ${b.name}</h3>
+      <p>${b.desc}</p>
+      <div class="badge on" style="display:inline-block;margin-bottom:8px;">${cls.name}</div>
+      <div class="gearlist" style="margin-top:6px;">
+        <li><span class="stat-tag">Stat priority</span><span class="stat-name mono">${b.stats}</span></li>
+        <li><span class="stat-tag">Recommended perks</span><span class="stat-name">${b.perks}</span></li>
+        <li><span class="stat-tag">Recommended skills</span><span class="stat-name">${b.skills}</span></li>
+      </div>
+    </div>`;
+  }).join('') || `<p class="scrollnote">No builds found for this class.</p>`;
+}
+
+/* ================= RENDER: PERKS & SKILLS ================= */
+const perkTabs = document.getElementById('perkTabs');
+const perkContent = document.getElementById('perkContent');
+
+function renderPerkTabs(){
+  perkTabs.innerHTML = CLASSES.map((c,i)=>`<button class="tab-btn ${i===0?'active':''}" data-cls="${c.id}">${c.icon} ${c.name}</button>`).join('');
+  perkTabs.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      perkTabs.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPerkContent(btn.dataset.cls);
+    });
+  });
+  renderPerkContent(CLASSES[0].id);
+}
+
+function renderPerkContent(id){
+  const data = PERKS_SKILLS[id];
+  const cls = CLASSES.find(c=>c.id===id);
+  const spellsBlock = data.signatureSpells ? `
+    <h3 style="margin-top:22px;">${cls.icon} ${cls.name} — Known spells/songs (Spell Memory)</h3>
+    <p class="scrollnote" style="margin-bottom:10px;">This class can choose spells/songs via Spell Memory. Below is a selection of the best-known options:</p>
+    <div class="badge-row">
+      ${data.signatureSpells.map(s=>`<span class="badge on">${s}</span>`).join('')}
+    </div>` : '';
+  const noteBlock = data.note ? `<div class="tip-box" style="margin-top:16px;"><b>Special note:</b> ${data.note}</div>` : '';
+  perkContent.innerHTML = `
+    <h3 style="margin-top:6px;">${cls.icon} ${cls.name} — All perks (${data.perks.length})</h3>
+    <p class="scrollnote" style="margin-bottom:10px;">You can equip up to 4 perks at once (1 extra every 5 levels, up to level 15).</p>
+    <div class="perk-list">
+      ${data.perks.map(p=>`<div class="perk-item"><div><div class="pname">${p[0]}</div><span class="ptype">${p[1]}</span></div><p>${p[2]}</p></div>`).join('')}
+    </div>
+    <h3 style="margin-top:22px;">${cls.icon} ${cls.name} — All skills (${data.skills.length})</h3>
+    <p class="scrollnote" style="margin-bottom:10px;">You can equip up to 2 skills at once.</p>
+    <div class="perk-list">
+      ${data.skills.map(p=>`<div class="perk-item"><div><div class="pname">${p[0]}</div><span class="ptype">${p[1]}</span></div><p>${p[2]}</p></div>`).join('')}
+    </div>
+    ${spellsBlock}
+    ${noteBlock}
+  `;
+}
+
+/* ================= ORIGINAL SVG ICONS (no game screenshots — see explanation below the app) ================= */
+function mobIcon(category){
+  const base = `viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"`;
+  const icons = {
+    skeleton: `<svg ${base}><circle cx="32" cy="24" r="14" fill="#e8dcc2"/><circle cx="26" cy="22" r="3" fill="#1d1712"/><circle cx="38" cy="22" r="3" fill="#1d1712"/><path d="M26 30 q6 4 12 0" stroke="#1d1712" stroke-width="2" fill="none"/><rect x="24" y="36" width="16" height="20" rx="3" fill="#cfc3a5"/><path d="M20 44 l-8 10 M44 44 l8 10 M28 56 l-3 6 M36 56 l3 6" stroke="#cfc3a5" stroke-width="4" stroke-linecap="round"/></svg>`,
+    skeletonElite: `<svg ${base}><circle cx="32" cy="24" r="15" fill="#e8dcc2"/><circle cx="26" cy="22" r="3" fill="#9c3f1a"/><circle cx="38" cy="22" r="3" fill="#9c3f1a"/><path d="M18 12 L32 4 L46 12" stroke="#c9a24a" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="22" y="36" width="20" height="22" rx="3" fill="#cfc3a5"/><rect x="14" y="38" width="10" height="16" rx="2" fill="#9c3f1a" opacity=".85"/></svg>`,
+    goblin: `<svg ${base}><ellipse cx="32" cy="30" rx="15" ry="16" fill="#5f9e6e"/><path d="M18 20 L10 8 M46 20 L54 8" stroke="#5f9e6e" stroke-width="5" stroke-linecap="round"/><circle cx="26" cy="28" r="3" fill="#1d1712"/><circle cx="38" cy="28" r="3" fill="#1d1712"/><path d="M25 38 q7 5 14 0" stroke="#1d1712" stroke-width="2" fill="none"/><rect x="20" y="46" width="24" height="14" rx="3" fill="#3a5a41"/></svg>`,
+    undead: `<svg ${base}><ellipse cx="32" cy="30" rx="15" ry="17" fill="#8a9070"/><circle cx="26" cy="26" r="3" fill="#e2762e"/><circle cx="38" cy="26" r="3" fill="#e2762e"/><path d="M23 36 q9 8 18 0" stroke="#3a3a2a" stroke-width="2.5" fill="none"/><rect x="19" y="46" width="26" height="14" rx="3" fill="#5a5a42"/><path d="M15 20 Q10 30 15 42 M49 20 Q54 30 49 42" stroke="#8a9070" stroke-width="3" fill="none" opacity=".6"/></svg>`,
+    flyer: `<svg ${base}><path d="M32 40 Q10 20 4 34 Q18 34 26 42" fill="#6f6250"/><path d="M32 40 Q54 20 60 34 Q46 34 38 42" fill="#6f6250"/><circle cx="32" cy="38" r="10" fill="#3a2e20"/><circle cx="28" cy="36" r="2" fill="#e2762e"/><circle cx="36" cy="36" r="2" fill="#e2762e"/></svg>`,
+    ogre: `<svg ${base}><ellipse cx="32" cy="26" rx="16" ry="15" fill="#9c8060"/><circle cx="25" cy="24" r="3.5" fill="#1d1712"/><circle cx="39" cy="24" r="3.5" fill="#1d1712"/><path d="M22 34 q10 6 20 0" stroke="#1d1712" stroke-width="2.5" fill="none"/><rect x="14" y="40" width="36" height="20" rx="4" fill="#6f5a3e"/><rect x="10" y="42" width="10" height="24" rx="2" fill="#4a3a28"/></svg>`,
+    wraith: `<svg ${base}><path d="M32 8 C50 8 54 30 50 46 C48 54 40 60 32 56 C24 60 16 54 14 46 C10 30 14 8 32 8 Z" fill="#7fa3bd" opacity=".8"/><circle cx="26" cy="26" r="2.5" fill="#0c0a08"/><circle cx="38" cy="26" r="2.5" fill="#0c0a08"/><path d="M14 46 L20 60 M22 50 L26 62 M42 50 L38 62 M50 46 L44 60" stroke="#7fa3bd" stroke-width="2" opacity=".6"/></svg>`,
+    eliteMark: `<svg ${base}><circle cx="32" cy="32" r="26" fill="none" stroke="#e2762e" stroke-width="3"/><path d="M20 26 L32 14 L44 26 L38 42 L26 42 Z" fill="#9c3f1a"/><circle cx="32" cy="28" r="4" fill="#e2762e"/></svg>`,
+  };
+  return icons[category] || icons.skeleton;
+}
+function mapMarkerIcon(type){
+  if(type==='boss') return '💀';
+  if(type==='stairs') return '🪜';
+  if(type==='exit') return '🌀';
+  return '📍';
+}
+
+/* ================= RENDER: BESTIARY ================= */
+const bestiaryGrid = document.getElementById('bestiaryGrid');
+const bestiarySearch = document.getElementById('bestiarySearch');
+
+function renderBestiary(filterText=''){
+  const f = filterText.toLowerCase();
+  const list = BESTIARY.filter(m => m.name.toLowerCase().includes(f) || m.zone.toLowerCase().includes(f));
+  bestiaryGrid.innerHTML = list.map(m=>`
+    <div class="info-card">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:56px;height:56px;flex:none;background:var(--bg-elev);border:1px solid var(--border);border-radius:8px;padding:6px;">${mobIcon(m.icon)}</div>
+        <div>
+          <h3 style="margin-bottom:2px;">${m.name} <span class="threat ${m.threat}">${m.threat==='low'?'Low':m.threat==='mid'?'Medium':'High'}</span></h3>
+          <p style="margin:0;"><b style="color:var(--dim)">Zones:</b> ${m.zone}</p>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:10px;"><b>Attack pattern:</b> ${m.attack}</div>
+      <p style="margin-top:8px;">${m.tips}</p>
+    </div>
+  `).join('') || `<p class="scrollnote">No mobs found.</p>`;
+}
+bestiarySearch.addEventListener('input', e=>renderBestiary(e.target.value));
+
+/* ================= RENDER: MAPS ================= */
+const mapList = document.getElementById('mapList');
+
+function renderMapLegend(){
+  document.getElementById('mapLegend').innerHTML = MAP_ICON_LEGEND.map(l=>`
+    <div class="info-card">
+      <h3><span style="font-size:1.3rem;">${l.icon}</span> ${l.label}</h3>
+      <p>${l.desc}</p>
+    </div>
+  `).join('');
+}
+
+function bossCard(boss){
+  if(!boss) return '';
+  return `
+    <div class="tip-box" style="margin-top:14px;">
+      <b>💀 ${boss.name}</b> <span class="scrollnote" style="display:inline;">— ${boss.race}</span>
+      <p style="margin:8px 0;">${boss.summary}</p>
+      <div style="font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Attack pattern (phases)</div>
+      <ul style="margin:0 0 10px;padding-left:18px;font-size:.88rem;">
+        ${boss.phases.map(p=>`<li style="margin-bottom:4px;">${p}</li>`).join('')}
+      </ul>
+      <div style="font-size:.85rem;"><b style="color:var(--gold);">Tip:</b> ${boss.tip}</div>
+    </div>
+  `;
+}
+
+function renderMaps(){
+  mapList.innerHTML = MAPS.map(m=>`
+    <div class="map-hero">
+      <div class="row">
+        <h3>${m.name}</h3>
+        <span class="map-meta">${m.tier}</span>
+      </div>
+      <p style="color:var(--dim);margin:0 0 8px;">${m.desc}</p>
+      <div class="key-elements-grid">
+        ${m.keyElements.map(k=>`
+          <div class="key-el key-el-${k.type}">
+            <span class="key-el-icon">${mapMarkerIcon(k.type)}</span>
+            <div>
+              <div class="key-el-label">${k.label}</div>
+              <div class="key-el-note">${k.note}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <ul style="margin:14px 0 0;padding-left:18px;font-size:.88rem;">
+        ${m.features.map(f=>`<li>${f}</li>`).join('')}
+      </ul>
+      ${bossCard(BOSS_INFO[m.bossId])}
+      ${m.secondBossId ? bossCard(BOSS_INFO[m.secondBossId]) : ''}
+    </div>
+  `).join('') + `<p class="scrollnote" style="margin-top:8px;">Boss assignment per floor/campaign is based on the official wiki (Bosses page, Dungeon page and patch notes 6.9–6.11); some floors can draw from a pool of multiple bosses, so the exact boss per run may vary. For the current, exact layout and live boss tracking, check <a href="https://darkanddarker.map.spellsandguns.com/" target="_blank">darkanddarker.map.spellsandguns.com</a>.</p>`;
+}
+
+
+/* ================= RENDER: GEAR & STATS ================= */
+function renderGearPage(){
+  document.getElementById('attrGrid').innerHTML = ATTRS_INFO.map(a=>`
+    <div class="info-card">
+      <h3><span style="width:10px;height:10px;border-radius:50%;background:${a.color};display:inline-block;"></span>${a.name}</h3>
+      <p>${a.desc}</p>
+    </div>
+  `).join('');
+  document.getElementById('statGrid').innerHTML = GEAR_STATS.map(s=>`
+    <div class="info-card">
+      <h3>${s.name}</h3>
+      <div class="badge" style="margin-bottom:8px;display:inline-block;">${s.tag}</div>
+      <p>${s.desc}</p>
+    </div>
+  `).join('');
+}
+
+/* ================= TAB NAVIGATION ================= */
+document.getElementById('tabNav').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn || !btn.dataset.view) return;
+  document.querySelectorAll('#tabNav .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+btn.dataset.view).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ================= INIT ================= */
+renderClassGrid();
+renderBuildFilter();
+renderBuilds();
+renderPerkTabs();
+renderBestiary();
+renderMapLegend();
+renderMaps();
+renderGearPage();
+</script>
+</body>
+</html>
